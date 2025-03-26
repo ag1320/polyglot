@@ -1,31 +1,23 @@
 import { useState } from "react";
-import { postUser } from "../utilities/serverCalls";
+import { verifyUser } from "../utilities/serverCalls";
 
-const Signup = () => {
+const Login = () => {
 
-  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const addUser = async () => {
+  const login = async () => {
     try {
-      await postUser(email, username, password);
-      setEmail("");
+      const isVerified = await verifyUser(username, password);
       setUsername("");
       setPassword("");
     } catch (err) {
-      console.error("Error adding user:", err);
+      console.error("Error logging in:", err);
     }
   };
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
       <input
         type="text"
         placeholder="Username"
@@ -38,9 +30,9 @@ const Signup = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={addUser}>Sign Up</button>
+      <button onClick={login}>Login</button>
     </div>
   );
 };
 
-export default Signup;
+export default Login;

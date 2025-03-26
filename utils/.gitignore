@@ -1,6 +1,6 @@
 *.png
 *.pem
-*.crs
+*.csr
 compose-commands.txt
 how-to-setup-ssl-cert-for-https.txt
 pallete.txt
