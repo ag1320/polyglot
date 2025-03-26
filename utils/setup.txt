@@ -1,0 +1,53 @@
+INIT NPM, GIT, ESLINT, ENV, DOCKER
+  run the following
+    npm init -y
+    eslint init
+    git init
+    touch docker-compose.yaml
+    touch .env.development
+    touch .env.production
+    touch .gitignore
+      .env
+      .env.development
+      .env.production
+      database/
+      node_modules/
+      *.log
+      localhost-key.pem
+      localhost.csr
+      localhost-cert.pem
+    if doing https traffic, generate new ssl cert with generate-new-ssl-cert.sh script
+    ensure script is executable (chmod +x generate-new-ssl-cert.sh)
+    mkdir utils (for storing all extraneous stuff)
+
+
+MAKE FILE STRUCTURE
+  run the following
+    mkdir frontend
+    mkdir backend
+
+FRONTEND
+  run 
+    in project root: npm create vite@latest frontend
+    cd frontend
+    touch Dockerfile
+    npm install vite
+    ensure that vite.config.js is configured to allow access from any network interface 
+      (just overwrite the config file to one from a previous project)
+
+BACKEND
+  run
+    npm init -y
+    npm install express pg morgan cors axios dotenv tsx typescript nodemon knex
+    npm install --save-dev @types/morgan @types/cors @types/express @types/pg @types/node
+    touch Dockerfile
+    in package.json 
+      "start script": "npx knex migrate:latest && nodemon app.js"
+      type: "module" <- allows ES import/export instead of require
+      main: app.js
+    mkdir src
+    Ensure that all ts files are inside of src (including app.ts)
+    touch tsconfig.json (preferably borrow from previous proj)
+    touch nodemon.json (preferably borrow from previous)
+    npx knex init
+    

@@ -1,7 +1,10 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import testRoutes from "./routes/test.js";
+import userRoutes from "./routes/userRoutes.js";
+import fs from 'fs';
+import https from 'https';
+import path from 'path';
 // import axios from "axios";
 // import controllers from "./controllers/controllers.js";  
 
@@ -13,6 +16,7 @@ app.use(
     origin: "*",
     methods: "GET, PUT, POST, PATCH, DELETE",
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
   })
 );
 app.use(express.json({ limit: "50mb" }));
@@ -26,7 +30,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Axios headers
+//Axios headers
 // const headers = {
 //   headers: {
 //     Origin: "http://localhost:3000",
@@ -36,10 +40,22 @@ app.use((req, res, next) => {
 // };
 
 // Routes
-app.use(testRoutes);
+app.use(userRoutes);
+
+
+//self signed ssl cert
+const httpsOptions = {
+  key: fs.readFileSync(path.resolve('/app/utils', 'polyglot-key.pem')),
+  cert: fs.readFileSync(path.resolve('/app/utils', 'polyglot-cert.pem')),
+};
 
 // Set port and start the server
 const port = 3001;
-app.listen(port, () =>
-  console.log(`Backend listening at http://localhost:${port}`)
-);
+https.createServer(httpsOptions, app).listen(port, () => {
+  console.log(`Server listening on http://localhost:${port}`);
+});
+
+//for http
+// app.listen(port, () =>
+//   console.log(`Backend listening at http://localhost:${port}`)
+// );

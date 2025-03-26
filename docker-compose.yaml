@@ -27,8 +27,9 @@ services:
       DB_CONNECTION_STRING: ${DB_CONNECTION_STRING}
     volumes:
       - ./backend:/app
+      - /home/ag1320/polyglot/utils:/app/utils
     env_file:
-      - .env.${NODE_ENV}
+      - .env
 
   frontend:
     networks:
@@ -41,6 +42,9 @@ services:
       - backend
     volumes:
       - ./frontend:/app
+      - /home/ag1320/polyglot/utils:/app/utils
+    env_file:
+      - .env
 
 networks:
   network1:

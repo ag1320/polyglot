@@ -1,0 +1,18 @@
+GENERAL:
+Typescript
+Tackling errors and warnings as they appear (not at the end)
+Better error handling throughout
+
+ENVIRONMENT:
+Development and Production
+
+FRONTEND:
+Themes
+Redux
+
+BACKEND:
+Prisma (instead of knex)
+
+SECUIRTY:
+OAuth
+Salt and Hash user defined credentials  - Argon2
