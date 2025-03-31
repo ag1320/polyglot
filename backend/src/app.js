@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
+import languageRoutes from "./routes/languageRoutes.js";
 import fs from 'fs';
 import https from 'https';
 import path from 'path';
@@ -41,7 +42,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use(userRoutes);
-
+app.use(languageRoutes);
 
 //self signed ssl cert
 const httpsOptions = {

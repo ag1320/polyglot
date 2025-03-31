@@ -2,11 +2,16 @@ import { Router } from "express";
 import argon2 from "argon2";
 import { 
   postUser, 
-  getHashByUsername, 
+  getHashByUsername,
+  getUsers,
+  checkEmail
 } from "../controllers/controllers.js";
 
 const router = Router();
 
+/****************************
+Helper functions
+****************************/
 async function hashPassword(password) {
   try {
     const hash = await argon2.hash(password, {
@@ -33,18 +38,41 @@ async function verifyPassword(hash, password) {
   }
 }
 
+
+/****************************
+Routes
+****************************/
 router.post("/users", async (req, res) => {
   const { email, username, password, nativeLanguageId } = req.body;
   const hash = await hashPassword(password);
 
   try {
+    // Check if email already exists in the database
+    const existingUser = await checkEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already in use" });
+    }
+
+    // Proceed with user creation if email is unique
     const data = await postUser(email, username, hash, nativeLanguageId);
-    res.status(200).json(data);
+    res.status(201).json(data);
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to add user");
   }
 });
+
+
+router.get("/users", async (req, res) => {
+  try {
+    const data = await getUsers();
+    res.status(200).json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to get users");
+  }
+});
+
 
 router.get("/verify-user", async (req, res) => {
   const { username, password } = req.query;
@@ -55,7 +83,7 @@ router.get("/verify-user", async (req, res) => {
     res.status(200).json(isVerified);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Failed to verify user");
+    res.status(500).json({ error: "Invalid Login Credentials" });
   }
 });
 

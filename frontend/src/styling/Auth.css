@@ -1,0 +1,25 @@
+.auth-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.divide-line{
+  height: 1px;
+  width: 100%;
+  background-color: white;
+}
+
+.component-padding{
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-logo{
+  width: 25%;
+  margin-bottom: 10px;
+}
