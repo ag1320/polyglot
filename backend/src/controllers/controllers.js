@@ -11,10 +11,12 @@ async function getHashByUsername (username) {
   return data[0].password;
 }
 
-async function getUsers() {
-  return await knex("users")
+async function getUserByUsername(username) {
+  const data = await knex("users")
     .select("users.id", "users.username", "users.email", "users.native_language_id", "languages.*")
-    .leftJoin("languages", "users.native_language_id", "languages.id");
+    .leftJoin("languages", "users.native_language_id", "languages.id")
+    .where("users.username", username)
+  return data[0];
 }
 
 async function getLanguages() {
@@ -22,16 +24,23 @@ async function getLanguages() {
     .select("*")
 }
 
+async function checkUsername(username) {
+  const data = await knex("users").where({ username });
+  return data[0]; 
+}
+
 async function checkEmail(email) {
   const data = await knex("users").where({ email });
-  return data.length > 0;
+  return data[0]; 
 }
+
 
 
 export { 
   postUser,
   getHashByUsername, 
-  getUsers,
   getLanguages,
-  checkEmail
+  checkUsername,
+  checkEmail,
+  getUserByUsername,
 };

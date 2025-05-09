@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { postUser, fetchUsers, fetchLanguages } from "../utilities/serverCalls";
+import {
+  postUser,
+  fetchLanguages,
+  checkUsername,
+  checkEmail
+} from "../utilities/serverCalls";
 import "../styling/Signup.css";
 import {
   FormControl,
@@ -23,7 +28,7 @@ const Signup = () => {
 
   // error checking
   const [usernameError, setUsernameError] = useState(false);
-  const [allUsernames, setAllUsernames] = useState([]);
+  const [emailError, setEmailError] = useState(false);
   const [allLanguages, setAllLanguages] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(false);
@@ -31,9 +36,7 @@ const Signup = () => {
   // fetch users and languages
   const fetchData = async () => {
     try {
-      const users = await fetchUsers();
       const languages = await fetchLanguages();
-      setAllUsernames(users.map((user) => user.username));
       setAllLanguages(languages);
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -44,18 +47,13 @@ const Signup = () => {
     fetchData();
   }, []);
 
-  // check if username is taken
-  useEffect(() => {
-    if (allUsernames.includes(username)) {
-      setUsernameError(true);
-    } else {
-      setUsernameError(false);
-    }
-  }, [username, allUsernames]);
-
   const addUser = async () => {
     if (usernameError) {
       console.error("Username is already taken");
+      return;
+    }
+    if (emailError) {
+      console.error("Email is already associated with an account");
       return;
     }
     if (!email || !username || !password || !nativeLanguage) {
@@ -80,7 +78,7 @@ const Signup = () => {
       fetchData();
       setSuccess(true);
     } catch (err) {
-      setErrorMessage(err.message)
+      setErrorMessage(err.message);
     }
   };
 
@@ -96,6 +94,32 @@ const Signup = () => {
     setSuccess(false);
   };
 
+  const handleCheckUsername = async () => {
+    if (!username) {
+      setUsernameError(false);
+      return;
+    }
+    const response = await checkUsername(username);
+    if (response === undefined) {
+      setErrorMessage("Trouble checking username");
+      return;
+    }
+    setUsernameError(!response.isAvailable);
+  };
+
+  const handleCheckEmail = async () => {
+    if (!email) {
+      setEmailError(false);
+      return;
+    }
+    const response = await checkEmail(email);
+    if (response === undefined) {
+      setErrorMessage("Trouble checking email");
+      return;
+    }
+    setEmailError(!response.isAvailable);
+  };
+
   return (
     <div>
       <Typography variant="h6" align="center" gutterBottom>
@@ -109,7 +133,12 @@ const Signup = () => {
         fullWidth
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        onBlur={() => {
+          handleCheckEmail();
+        }}
         margin="normal"
+        error={emailError}
+        helperText={emailError ? "Email is already associated with an account" : ""}
       />
 
       {/* Username TextField */}
@@ -120,6 +149,9 @@ const Signup = () => {
         fullWidth
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        onBlur={() => {
+          handleCheckUsername();
+        }}
         margin="normal"
         error={usernameError}
         helperText={usernameError ? "Username is already taken" : ""}
@@ -135,7 +167,6 @@ const Signup = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         margin="normal"
-
       />
       <TextField
         label="Verify Password"
@@ -164,7 +195,7 @@ const Signup = () => {
             <MenuItem
               key={language.code}
               value={language}
-              sx = {{color: "black"}}
+              sx={{ color: "black" }}
             >
               <img
                 src={`https://flagcdn.com/${language.code}.svg`}
@@ -197,7 +228,11 @@ const Signup = () => {
         autoHideDuration={3000}
         onClose={handleSuccessClose}
       >
-        <Alert onClose={handleSuccessClose} severity="success" className="alert">
+        <Alert
+          onClose={handleSuccessClose}
+          severity="success"
+          className="alert"
+        >
           Signup Successful
         </Alert>
       </Snackbar>

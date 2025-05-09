@@ -1,22 +1,34 @@
 import { useState } from "react";
-import { verifyUser } from "../utilities/serverCalls";
 import { TextField, Button, Typography, Snackbar, Alert } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../state/userSlice.js";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const login = async () => {
-    setErrorMessage("");
-    try {
-      const isVerified = await verifyUser(username, password);
+  setErrorMessage("");
+  try {
+    const resultAction = await dispatch(loginUser({ username, password }));
+
+    if (loginUser.fulfilled.match(resultAction)) {
+      console.log("Login successful:");
       setUsername("");
       setPassword("");
-    } catch (err) {
-      setErrorMessage(err.message);
+      navigate("/dashboard");
+    } else {
+      setErrorMessage(resultAction.payload || "Login failed");
     }
-  };
+  } catch (err) {
+    setErrorMessage(err.message);
+  }
+};
 
   const handleClose = () => {
     setErrorMessage("");

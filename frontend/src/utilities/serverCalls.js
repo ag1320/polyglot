@@ -22,23 +22,12 @@ async function verifyUser(username, password) {
       username,
       password
     };
-    const isVerified = await axios.get("https://localhost:3001/verify-user", {
+    const response = await axios.get("https://localhost:3001/verify-user", {
       params: payload,
     });
-    console.log("isVerified", isVerified.data);
-    return isVerified.data;
+    return response.data;
   } catch (err) {
     throw new Error(err.response.data.error || "An unexpected error occurred");
-  }
-}
-
-async function fetchUsers() {
-  try {
-    const users = await axios.get("https://localhost:3001/users");
-    return users.data;
-  } catch (err) {
-    console.log(err);
-    return;
   }
 }
 
@@ -52,11 +41,36 @@ async function fetchLanguages() {
   }
 }
 
+async function checkUsername(username) {
+  try {
+    const response = await axios.get("https://localhost:3001/check-username", {
+      params: { username },
+    });
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+
+async function checkEmail(email) {
+  try {
+    const response = await axios.get("https://localhost:3001/check-email", {
+      params: { email },
+    });
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+
 export {
   postUser, 
   verifyUser, 
-  fetchUsers, 
-  fetchLanguages
+  fetchLanguages,
+  checkUsername,
+  checkEmail
 };
 
 

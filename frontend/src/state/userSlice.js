@@ -1,39 +1,69 @@
+// src/store/userSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { verifyUser } from "../utilities/serverCalls";
 
-//Fetch users from the server
-export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-  const response = await axios.get("https://localhost:3001/users");
-  return response.data;
+// Async thunk to login and receive token + user data
+export const loginUser = createAsyncThunk(
+  "user/loginUser",
+  async ({ username, password }, { rejectWithValue }) => {
+    try {
+      const { token, user } = await verifyUser(username, password);
+      localStorage.setItem("token", token);
+      return { token, user };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const logoutUser = createAsyncThunk("user/logoutUser", async () => {
+  localStorage.removeItem("token");
+  return true;
 });
 
+const initialState = {
+  token: localStorage.getItem("token") || null,
+  user: null,
+  isAuthenticated: !!localStorage.getItem("token"),
+  loading: false,
+  error: null,
+};
+
 const userSlice = createSlice({
-  name: "users",
-  initialState: {
-    list: [],
-    status: "idle", // "idle" | "loading" | "succeeded" | "failed"
-    error: null,
-  },
-  reducers: {
-    clearUsers: (state) => {
-      state.list = []; // Optional: A way to reset users
-    },
-  },
+  name: "user",
+  initialState,
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUsers.pending, (state) => {
-        state.status = "loading";
+      // LOGIN
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
-      .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.list = action.payload;
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        state.isAuthenticated = true;
+        state.error = null;
       })
-      .addCase(fetchUsers.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.token = null;
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+
+      // LOGOUT
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.token = null;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.error = null;
       });
   },
 });
 
-export const { clearUsers } = userSlice.actions;
 export default userSlice.reducer;

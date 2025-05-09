@@ -1,12 +1,16 @@
 import { Router } from "express";
 import argon2 from "argon2";
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 import { 
   postUser, 
   getHashByUsername,
-  getUsers,
-  checkEmail
+  checkUsername,
+  checkEmail,
+  getUserByUsername
 } from "../controllers/controllers.js";
 
+dotenv.config();
 const router = Router();
 
 /****************************
@@ -38,6 +42,19 @@ async function verifyPassword(hash, password) {
   }
 }
 
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403); // Invalid token
+
+    req.user = user; // Attach user payload to request
+    next();
+  });
+}
 
 /****************************
 Routes
@@ -48,8 +65,8 @@ router.post("/users", async (req, res) => {
 
   try {
     // Check if email already exists in the database
-    const existingUser = await checkEmail(email);
-    if (existingUser) {
+    const emailResponse = await checkEmail(email);
+    if (emailResponse) {
       return res.status(400).json({ error: "Email already in use" });
     }
 
@@ -62,17 +79,31 @@ router.post("/users", async (req, res) => {
   }
 });
 
+router.get("/check-username", async (req, res) => {
+  const { username } = req.query;
+  if (!username) return res.status(400).json({ error: "Username is required" });
 
-router.get("/users", async (req, res) => {
   try {
-    const data = await getUsers();
-    res.status(200).json(data);
+    const user = await checkUsername(username);
+    res.status(200).json({ isAvailable: !user });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Failed to get users");
+    res.status(500).json({ error: "Failed to check username" });
   }
 });
 
+router.get("/check-email", async (req, res) => {
+  const { email } = req.query;
+  if (!email) return res.status(400).json({ error: "Email is required" });
+
+  try {
+    const emailResponse = await checkEmail(email);
+    res.status(200).json({ isAvailable: !emailResponse });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to check email" });
+  }
+});
 
 router.get("/verify-user", async (req, res) => {
   const { username, password } = req.query;
@@ -80,10 +111,27 @@ router.get("/verify-user", async (req, res) => {
   try {
     const hash = await getHashByUsername(username);
     const isVerified = await verifyPassword(hash, password);
-    res.status(200).json(isVerified);
+
+    if (!isVerified) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // Create JWT payload
+    const payload = { username };
+
+    // Sign the token
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRY || "1h",
+    });
+
+    //get user data
+    const user = await getUserByUsername(username);
+
+    // Send token back to client
+    res.status(200).json({ token, user });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Invalid Login Credentials" });
+    res.status(500).json({ error: "Login failed" });
   }
 });
 
