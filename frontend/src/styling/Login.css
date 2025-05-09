@@ -1,0 +1,11 @@
+.login-container {
+  width: 100%;
+}
+
+.checkbox-padding {
+  padding-left: 20px;
+}
+
+.custom-textfield .MuiOutlinedInput-root fieldset {
+  border-color: #fff;
+}

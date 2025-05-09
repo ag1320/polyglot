@@ -5,10 +5,13 @@ import { verifyUser } from "../utilities/serverCalls";
 // Async thunk to login and receive token + user data
 export const loginUser = createAsyncThunk(
   "user/loginUser",
-  async ({ username, password }, { rejectWithValue }) => {
+  async ({ username, password, isUsernameSaved }, { rejectWithValue }) => {
     try {
       const { token, user } = await verifyUser(username, password);
       localStorage.setItem("token", token);
+      if (isUsernameSaved) {
+        localStorage.setItem("savedUsername", username);
+      }
       return { token, user };
     } catch (err) {
       return rejectWithValue(err.message);

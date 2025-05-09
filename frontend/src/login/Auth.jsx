@@ -5,6 +5,7 @@ import { styled } from "@mui/material/styles";
 import { useState } from "react";
 import "../styling/Auth.css";
 import logo from "../../images/polyglot-icon.png";
+import CustomButton from "../components/CustomButton";
 
 const AuthCard = styled(Card)(({ theme }) => ({
   backgroundColor: theme.palette.backgroundSecondary.main,
@@ -25,31 +26,28 @@ const Auth = () => {
     <div className="auth-container">
       <AuthCard>
         <img src={logo} alt="Logo" className="auth-logo" />
+        {modeEnum === 0 ? (
+          <Typography variant="h4">Welcome to Polyglot!</Typography>
+        ) : (
+          <></>
+        )}
         <div className="divide-line" />
         {modeEnum === 0 ? (
           <>
             <div className="component-padding">
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={() => setModeEnum(1)}
-              >
-                Login
-              </Button>
+              <CustomButton
+                buttonFunction={() => setModeEnum(1)}
+                buttonText={"Login"}
+              />
             </div>
             <div className="component-padding">
               <Typography>OR</Typography>
             </div>
             <div className="component-padding">
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={() => setModeEnum(2)}
-              >
-                Signup
-              </Button>
+              <CustomButton
+                buttonFunction={() => setModeEnum(2)}
+                buttonText={"Signup"}
+              />
             </div>
           </>
         ) : modeEnum === 1 ? (
@@ -60,14 +58,10 @@ const Auth = () => {
               <Typography>OR</Typography>
             </div>
             <div className="component-padding">
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={() => setModeEnum(2)}
-              >
-                Signup
-              </Button>
+              <CustomButton
+                buttonFunction={() => setModeEnum(2)}
+                buttonText={"Signup"}
+              />
             </div>
           </>
         ) : (
@@ -78,14 +72,10 @@ const Auth = () => {
               <Typography>OR</Typography>
             </div>
             <div className="component-padding">
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={() => setModeEnum(1)}
-              >
-                Login
-              </Button>
+              <CustomButton
+                buttonFunction={() => setModeEnum(1)}
+                buttonText={"Login"}
+              />
             </div>
           </>
         )}

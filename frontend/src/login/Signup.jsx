@@ -12,11 +12,11 @@ import {
   Select,
   MenuItem,
   TextField,
-  Button,
   Typography,
   Snackbar,
   Alert,
 } from "@mui/material";
+import CustomButton from "../components/CustomButton";
 
 const Signup = () => {
   // user
@@ -210,9 +210,7 @@ const Signup = () => {
 
       {/* Submit Button */}
       <div className="component-padding">
-        <Button variant="contained" color="primary" fullWidth onClick={addUser}>
-          Submit
-        </Button>
+        <CustomButton buttonFunction={addUser} buttonText={"Submit"}/>
       </div>
       <Snackbar
         open={errorMessage !== ""}
