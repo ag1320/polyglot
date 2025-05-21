@@ -1,0 +1,12 @@
+.main-layout{
+  height: 100vh;
+  align-items: stretch;
+}
+
+/* Main content grid container */
+.main-content-grid-container {
+  padding: 16px;
+  box-sizing: border-box;
+  height: 100vh;
+  align-items: stretch;
+}

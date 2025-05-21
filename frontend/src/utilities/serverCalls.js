@@ -65,12 +65,29 @@ async function checkEmail(email) {
   }
 }
 
+async function translateWord(word, sourceLanguageId, targetLanguageId) {
+  const payload = {
+    text: word,
+    from: sourceLanguageId,
+    to: targetLanguageId
+  };
+  try {
+    const response = await axios.post("https://localhost:3001/translate", payload);
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+
 export {
   postUser, 
   verifyUser, 
   fetchLanguages,
   checkUsername,
-  checkEmail
+  checkEmail,
+  translateWord
 };
 
 

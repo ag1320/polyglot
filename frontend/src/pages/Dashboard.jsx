@@ -1,22 +1,19 @@
-import { Button } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { logoutUser } from "../state/userSlice";
-import { useNavigate } from "react-router-dom";
+import "../styling/Dashboard.css";
+import Sidebar from "../components/Sidebar";
+import MainPage from "./MainPage";
+import { Grid } from "@mui/material";
 
 const Dashboard = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const logout = () => {
-    dispatch(logoutUser());
-    navigate("/");
-  };
-  
   return (
-    <Button onClick={logout} variant="contained" color="primary">
-      Logout
-    </Button>
+    <Grid container className="main-layout">
+      <Grid item xs={1}>
+        <Sidebar />
+      </Grid>
+      <Grid item xs={11} className="main-content-grid-container">
+        <MainPage />
+      </Grid>
+    </Grid>
   );
-}
+};
 
 export default Dashboard;

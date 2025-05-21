@@ -2,49 +2,59 @@ version: "3"
 services:
   database:
     image: "postgres:14"
+    container_name: database
     volumes:
       - ./database:/var/lib/postgresql/data
     networks:
       - network1
-    container_name: database
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+    env_file:
+      - .env
     ports:
       - "${DB_PORT}:5432"
 
   backend:
+    build: ./backend
+    container_name: backend
     networks:
       - network1
-    build: ./backend
     ports:
       - "3001:3001"
-    container_name: backend
     depends_on:
       - database
-    environment:
-      DB_CONNECTION_STRING: ${DB_CONNECTION_STRING}
+      - libretranslate
+    env_file:
+      - .env
     volumes:
       - ./backend:/app
       - /home/ag1320/polyglot/utils:/app/utils
-    env_file:
-      - .env
 
   frontend:
+    build: ./frontend
+    container_name: frontend
     networks:
       - network1
-    build: ./frontend
     ports:
       - "5173:5173"
-    container_name: frontend
     depends_on:
       - backend
+    env_file:
+      - .env
     volumes:
       - ./frontend:/app
       - /home/ag1320/polyglot/utils:/app/utils
+
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+    container_name: libretranslate
+    networks:
+      - network1
+    ports:
+      - "5000:5000"
     env_file:
       - .env
+    volumes:
+      - ./lt-models:/home/libretranslate/.local
+    restart: unless-stopped
 
 networks:
   network1:

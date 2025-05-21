@@ -1,0 +1,27 @@
+.sidebar {
+  background-color: #161B33;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  color: white;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.pip{
+  position: absolute;
+  width: 60%;
+}
+
+.sidebar-content{
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+}
+
+.sidebar-icon{
+  color: white;
+}

@@ -1,0 +1,68 @@
+/* .main-content {
+  width: 100%;
+}
+
+.main-content-block{
+  background-color: #161B33;
+  border-radius: 20px;
+  width: 100%;
+}
+
+.secondary-content-block{
+  background-color: #161B33;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.tertiary-content-block{
+  background-color: #161B33;
+  border-radius: 20px;
+}
+
+.learning-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.6;
+}
+
+.main-content-block .title{
+  color: #0D0C1D;
+}
+
+.title{
+  color: #0D0C1D;
+}
+
+.test{
+  width: 100%;
+} */
+
+/* Paper content blocks */
+.content-block {
+  padding: 16px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Stack containers for right panel */
+.right-panel-stack {
+  height: 100%;
+}
+
+/* 75% vertical space */
+.top-right-block {
+  flex-grow: 3;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 25% vertical space */
+.bottom-right-block {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+
