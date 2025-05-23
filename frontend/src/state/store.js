@@ -1,10 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
+import languageReducer from "./languageSlice";
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
-    users: userReducer,
+    user: userReducer,
+    languages: languageReducer,
   },
 });
 
 export default store;
+
+
+

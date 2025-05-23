@@ -1,0 +1,15 @@
+.language-select-flag-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.flag-icon{
+  width: 25px;
+  object-fit: contain;
+}
+
+.language-select-name{
+  margin-left: 10px;
+}

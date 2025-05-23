@@ -1,6 +1,6 @@
 // src/store/userSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { verifyUser } from "../utilities/serverCalls";
+import { getUser, verifyUser } from "../utilities/serverCalls";
 
 // Async thunk to login and receive token + user data
 export const loginUser = createAsyncThunk(
@@ -19,6 +19,18 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const updateUser = createAsyncThunk(
+  "user/updateUser",
+  async (_, { rejectWithValue }) => { 
+    try {
+      const updatedUser = await getUser();
+      return updatedUser;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 export const logoutUser = createAsyncThunk("user/logoutUser", async () => {
   localStorage.removeItem("token");
   return true;
@@ -30,12 +42,17 @@ const initialState = {
   isAuthenticated: !!localStorage.getItem("token"),
   loading: false,
   error: null,
+  selectedLanguage: null,
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedLanguage: (state, action) => {
+      state.selectedLanguage = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // LOGIN
@@ -49,6 +66,12 @@ const userSlice = createSlice({
         state.user = action.payload.user;
         state.isAuthenticated = true;
         state.error = null;
+
+        const defaultLang = action.payload.user.my_languages?.find(
+          (lang) => lang.is_default
+        );
+
+        state.selectedLanguage = defaultLang || null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -65,8 +88,24 @@ const userSlice = createSlice({
         state.isAuthenticated = false;
         state.loading = false;
         state.error = null;
+      })
+      // UPDATE USER
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+
+        console.log("Updated User:", action.payload);
+        const defaultLang = action.payload.my_languages?.find(
+          (lang) => lang.is_default
+        );
+
+        console.log("Default Language:", defaultLang);
+        state.selectedLanguage = defaultLang || null;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.error = action.payload;
       });
   },
 });
 
+export const { setSelectedLanguage, setDefaultLanguage } = userSlice.actions;
 export default userSlice.reducer;

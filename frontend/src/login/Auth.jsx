@@ -1,6 +1,6 @@
 import Signup from "./Signup";
 import Login from "./Login";
-import { Button, Card, Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useState } from "react";
 import "../styling/Auth.css";

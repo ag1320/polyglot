@@ -1,0 +1,11 @@
+.default-language-card{
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.default-language-text{
+  width: 100%;
+  text-align: center;
+}

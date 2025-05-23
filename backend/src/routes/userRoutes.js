@@ -1,5 +1,4 @@
 import { Router } from "express";
-import argon2 from "argon2";
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { 
@@ -7,8 +6,15 @@ import {
   getHashByUsername,
   checkUsername,
   checkEmail,
-  getUserByUsername
+  getUser,
+  postUserLanguage,
+  postUserLanguageDefault
 } from "../controllers/controllers.js";
+import {
+  hashPassword,
+  verifyPassword,
+  authenticateToken
+} from "../utils/utils.js";
 
 dotenv.config();
 const router = Router();
@@ -16,45 +22,7 @@ const router = Router();
 /****************************
 Helper functions
 ****************************/
-async function hashPassword(password) {
-  try {
-    const hash = await argon2.hash(password, {
-      type: argon2.argon2id,
-      memoryCost: 2 ** 16,
-      timeCost: 3,
-      parallelism: 2,
-    });
-    return hash;
-  } catch (err) {
-    console.error("Error hashing password:", err);
-  }
-}
 
-async function verifyPassword(hash, password) {
-  try {
-    if (await argon2.verify(hash, password)) {
-      return true
-    } else {
-      return false
-    }
-  } catch (err) {
-    console.error("Error verifying password:", err);
-  }
-}
-
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
-
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403); // Invalid token
-
-    req.user = user; // Attach user payload to request
-    next();
-  });
-}
 
 /****************************
 Routes
@@ -78,6 +46,17 @@ router.post("/users", async (req, res) => {
     res.status(500).send("Failed to add user");
   }
 });
+
+router.get("/users", authenticateToken, async (req, res) => {
+  try {
+    const data = await getUser({id: req.user.id});
+    res.status(200).json( data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to get user" });
+  }
+});
+
 
 router.get("/check-username", async (req, res) => {
   const { username } = req.query;
@@ -104,7 +83,6 @@ router.get("/check-email", async (req, res) => {
     res.status(500).json({ error: "Failed to check email" });
   }
 });
-
 router.get("/verify-user", async (req, res) => {
   const { username, password } = req.query;
 
@@ -116,22 +94,43 @@ router.get("/verify-user", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Create JWT payload
-    const payload = { username };
-
-    // Sign the token
+    const user = await getUser({username});
+    const payload = { id: user.id, username: user.username };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRY || "1h",
     });
 
-    //get user data
-    const user = await getUserByUsername(username);
-
-    // Send token back to client
     res.status(200).json({ token, user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Login failed" });
+  }
+});
+
+
+router.post("/user-language", authenticateToken, async (req, res) => {
+  const { newLanguage, isDefault } = req.body;
+  const userId = req.user.id;
+  console.log("Received new language:", { newLanguage, userId });
+  try {
+    await postUserLanguage(newLanguage, userId, isDefault);
+    res.status(201).json({ message: "Language added successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to add language");
+  }
+});
+
+router.post("/user-language-default", authenticateToken, async (req, res) => {
+  const { languageId } = req.body;
+  const userId = req.user.id;
+  console.log("Received new default:", { languageId, userId });
+  try {
+    await postUserLanguageDefault(languageId, userId);
+    res.status(201).json({ message: "Language default changed" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to change language default");
   }
 });
 

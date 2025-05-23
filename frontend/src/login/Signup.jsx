@@ -1,22 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   postUser,
-  fetchLanguages,
   checkUsername,
-  checkEmail
+  checkEmail,
 } from "../utilities/serverCalls";
 import "../styling/Signup.css";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  Typography,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import { TextField, Typography, Snackbar, Alert } from "@mui/material";
 import CustomButton from "../components/CustomButton";
+import LanguageSelect from "../components/LanguageSelect";
+import { useSelector } from "react-redux";
 
 const Signup = () => {
   // user
@@ -29,23 +21,27 @@ const Signup = () => {
   // error checking
   const [usernameError, setUsernameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
-  const [allLanguages, setAllLanguages] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
-  // fetch users and languages
-  const fetchData = async () => {
-    try {
-      const languages = await fetchLanguages();
-      setAllLanguages(languages);
-    } catch (err) {
-      console.error("Error fetching data:", err);
-    }
-  };
+  
+  const allLanguages = useSelector((state) => state.languages.allLanguages)
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+
+  // // fetch languages
+  // const fetchData = async () => {
+  //   try {
+  //     const languages = await fetchLanguages();
+  //     setAllLanguages(languages);
+  //   } catch (err) {
+  //     console.error("Error fetching data:", err);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+ 
 
   const addUser = async () => {
     if (usernameError) {
@@ -75,7 +71,6 @@ const Signup = () => {
       setPassword("");
       setPasswordVerify("");
       setNativeLanguage("");
-      fetchData();
       setSuccess(true);
     } catch (err) {
       setErrorMessage(err.message);
@@ -138,7 +133,9 @@ const Signup = () => {
         }}
         margin="normal"
         error={emailError}
-        helperText={emailError ? "Email is already associated with an account" : ""}
+        helperText={
+          emailError ? "Email is already associated with an account" : ""
+        }
       />
 
       {/* Username TextField */}
@@ -179,38 +176,17 @@ const Signup = () => {
         margin="normal"
       />
 
-      {/* Native Language Select */}
-      <FormControl fullWidth variant="outlined" margin="normal" required>
-        <InputLabel id="native-language-label">Native Language</InputLabel>
-        <Select
-          labelId="native-language-label"
-          value={nativeLanguage}
-          onChange={handleLanguageChange}
-          label="Native Language"
-        >
-          <MenuItem value="" disabled>
-            Select your native language
-          </MenuItem>
-          {allLanguages.map((language) => (
-            <MenuItem
-              key={language.code}
-              value={language}
-              sx={{ color: "black" }}
-            >
-              <img
-                src={`https://flagcdn.com/${language.code}.svg`}
-                alt={`${language.name} flag`}
-                className="flag-icon"
-              />
-              {language.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <LanguageSelect
+        allLanguages={allLanguages}
+        selectedLanguage={nativeLanguage}
+        handleLanguageChange={handleLanguageChange}
+        inputLabel="Native Language"
+        mode="full"
+      />
 
       {/* Submit Button */}
       <div className="component-padding">
-        <CustomButton buttonFunction={addUser} buttonText={"Submit"}/>
+        <CustomButton buttonFunction={addUser} buttonText={"Submit"} />
       </div>
       <Snackbar
         open={errorMessage !== ""}

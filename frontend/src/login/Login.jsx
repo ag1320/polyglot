@@ -100,7 +100,6 @@ const Login = () => {
             <CustomCheckbox
               checked={isUsernameSaved}
               onChange={(e) => setIsUsernameSaved(e.target.checked)}
-              out
             />
           }
           label="Save Username"

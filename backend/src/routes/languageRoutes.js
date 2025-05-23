@@ -6,6 +6,8 @@ import { translateWord } from "../libreTranslateCalls/ltCalls.js"
 
 const router = Router();
 
+//NEED TO AUTH TOKEN
+
 /****************************
 Routes
 ****************************/
