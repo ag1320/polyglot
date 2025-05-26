@@ -5,12 +5,13 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
-  FormLabel,
   Card,
+  Typography,
 } from "@mui/material";
 import CustomButton from "./CustomButton";
 import { updateUser } from "../state/userSlice";
 import { postNewDefaultLanguage } from "../utilities/serverCalls.js";
+import "../styling/DefaultLanguageSelectorCard.css";
 
 const DefaultLanguageSelectorCard = () => {
   const dispatch = useDispatch();
@@ -41,32 +42,38 @@ const DefaultLanguageSelectorCard = () => {
   };
 
   return (
-    <Card className="add-language-card">
-      <FormControl component="fieldset" fullWidth>
-        <FormLabel component="legend">Select Default Language</FormLabel>
+    <Card className="default-language-card">
+      <Typography variant="h5" className="default-language-text">
+        Select a Default Language
+      </Typography>
+      <FormControl component="fieldset" fullWidth className="default-language-form-control">
         <RadioGroup value={selectedLangId} onChange={handleChange}>
           {myLanguages.map((lang) => (
             <FormControlLabel
               key={lang.id}
               value={lang.id}
               control={<Radio />}
+              className="default-language-form-control-label"
               label={
-                <>
-                  <div>{lang.name}</div>
+                <div className="language-choice-container">
                   <img
                     src={`https://flagcdn.com/${lang.code}.svg`}
                     alt={`${lang.name} flag`}
                     className="flag-icon"
                   />
-                </>
+                  <div className="language-choice-text">{lang.name}</div>
+                </div>
               }
             />
           ))}
         </RadioGroup>
-        <CustomButton
-          buttonFunction={handleSubmit}
-          buttonText="Set Default Language"
-        />
+        <div className="default-language-button-container">
+          <CustomButton
+            buttonFunction={handleSubmit}
+            buttonText="Set Default Language"
+            className="default-language-button"
+          />
+        </div>
       </FormControl>
     </Card>
   );

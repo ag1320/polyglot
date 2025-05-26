@@ -7,22 +7,30 @@ import {
   AddLanguageInputLabel,
   AddLanguageSelect,
   AddLanguageMenuItem,
+  SignupLanguageFormControl,
+  SignupLanguageInputLabel,
+  SignupLanguageSelect,
+  SignupLanguageMenuItem,
 } from "../styling/LanguageSelect.js";
 import "../styling/LanguageSelect.css";
-import { InputLabel, Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 
 const LanguageSelect = ({
   allLanguages,
   selectedLanguage,
   handleLanguageChange,
   inputLabel,
-  mode = "full", // 'mini' or 'full or signup'
+  mode = "full", // 'mini', 'full', or 'signup'
 }) => {
-  if (!allLanguages || allLanguages.length === 0 || !selectedLanguage) {
+  if (!allLanguages || allLanguages.length === 0) {
     return null;
   }
 
-  console.log("Selected Language:", selectedLanguage);
+  const sortedLanguages = [...allLanguages].sort((a, b) =>
+    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+  );
+
+  console.log("selectedLanguage:", selectedLanguage);
 
   return (
     <>
@@ -40,7 +48,7 @@ const LanguageSelect = ({
               },
             }}
             renderValue={(selectedId) => {
-              const selectedLang = allLanguages.find(
+              const selectedLang = sortedLanguages.find(
                 (lang) => lang.id === selectedId
               );
               return selectedLang ? (
@@ -54,22 +62,75 @@ const LanguageSelect = ({
               ) : null;
             }}
           >
-            {allLanguages.map((language) => (
+            {sortedLanguages.map((language) => (
               <MiniMenuItem key={language.code} value={language.id}>
-                <img
-                  src={`https://flagcdn.com/${language.code}.svg`}
-                  alt={`${language.name} flag`}
-                  className="flag-icon"
-                />
+                <Tooltip
+                  title={language.name}
+                  key={language.code}
+                  arrow
+                  placement="top"
+                >
+                  <img
+                    src={`https://flagcdn.com/${language.code}.svg`}
+                    alt={`${language.name} flag`}
+                    className="flag-icon"
+                  />
+                </Tooltip>
               </MiniMenuItem>
             ))}
           </MiniSelect>
         </MiniFormControl>
+      ) : mode === "signup" ? (
+        <>
+          <SignupLanguageFormControl fullWidth variant="outlined">
+            <SignupLanguageInputLabel>
+              Select a Language
+            </SignupLanguageInputLabel>
+            <SignupLanguageSelect
+              value={selectedLanguage.id}
+              onChange={handleLanguageChange}
+              label={inputLabel}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    color: "000",
+                  },
+                },
+              }}
+              renderValue={(selectedId) => {
+                const selectedLang = sortedLanguages.find(
+                  (lang) => lang.id === selectedId
+                );
+                return selectedLang ? (
+                  <Box className="language-select-flag-container">
+                    <img
+                      src={`https://flagcdn.com/${selectedLang.code}.svg`}
+                      alt={`${selectedLang.name} flag`}
+                      className="flag-icon"
+                    />
+                    <div className="language-select-name">
+                      {selectedLang.name}
+                    </div>
+                  </Box>
+                ) : null;
+              }}
+            >
+              {sortedLanguages.map((language) => (
+                <SignupLanguageMenuItem key={language.code} value={language.id}>
+                  <img
+                    src={`https://flagcdn.com/${language.code}.svg`}
+                    alt={`${language.name} flag`}
+                    className="flag-icon"
+                  />
+                  <div className="language-select-name">{language.name}</div>
+                </SignupLanguageMenuItem>
+              ))}
+            </SignupLanguageSelect>
+          </SignupLanguageFormControl>
+        </>
       ) : (
         <AddLanguageFormControl fullWidth variant="outlined">
-          <AddLanguageInputLabel>
-            Add a New Language
-          </AddLanguageInputLabel>
+          <AddLanguageInputLabel>Add a New Language</AddLanguageInputLabel>
           <AddLanguageSelect
             value={selectedLanguage.id}
             onChange={handleLanguageChange}
@@ -82,7 +143,7 @@ const LanguageSelect = ({
               },
             }}
             renderValue={(selectedId) => {
-              const selectedLang = allLanguages.find(
+              const selectedLang = sortedLanguages.find(
                 (lang) => lang.id === selectedId
               );
               return selectedLang ? (
@@ -92,12 +153,14 @@ const LanguageSelect = ({
                     alt={`${selectedLang.name} flag`}
                     className="flag-icon"
                   />
-                  <div className="language-select-name">{selectedLang.name}</div>
+                  <div className="language-select-name">
+                    {selectedLang.name}
+                  </div>
                 </Box>
               ) : null;
             }}
           >
-            {allLanguages.map((language) => (
+            {sortedLanguages.map((language) => (
               <AddLanguageMenuItem key={language.code} value={language.id}>
                 <img
                   src={`https://flagcdn.com/${language.code}.svg`}
@@ -115,52 +178,3 @@ const LanguageSelect = ({
 };
 
 export default LanguageSelect;
-
-{
-  /* <StyledFormControl ownerState={{ mode }} fullWidth variant="outlined" required>
-  <StyledInputLabel ownerState={{ mode }}>{inputLabel}</StyledInputLabel>
-  <StyledSelect
-    ownerState={{ mode }}
-    value={selectedLanguage}
-    onChange={handleLanguageChange}
-    label={inputLabel}
-    IconComponent={showArrow ? undefined : () => null}
-    renderValue={(selected) =>
-      mode === "mini" ? (
-        <img
-          src={`https://flagcdn.com/${selected.code}.svg`}
-          alt={`${selected.name} flag`}
-          className="flag-icon"
-        />
-      ) : (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <img
-            src={`https://flagcdn.com/${selected.code}.svg`}
-            alt={`${selected.name} flag`}
-            className="flag-icon"
-          />
-          {selected.name}
-        </div>
-      )
-    }
-  >
-    {allLanguages.map((language) => (
-      <StyledMenuItem
-        key={language.code}
-        value={language}
-        ownerState={{ mode }}
-      >
-        <img
-          src={`https://flagcdn.com/${language.code}.svg`}
-          alt={`${language.name} flag`}
-          className="flag-icon"
-        />
-        {mode === "full" && language.name}
-      </StyledMenuItem>
-    ))}
-  </StyledSelect>
-  {showHelperText && (
-    <p style={{ fontSize: "0.75rem", marginTop: 4 }}>Select your language</p>
-  )}
-</StyledFormControl>; */
-}

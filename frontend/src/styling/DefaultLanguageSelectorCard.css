@@ -3,9 +3,43 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
 }
 
 .default-language-text{
   width: 100%;
   text-align: center;
+  color: black;
+}
+
+.default-language-form-control{
+  height: 100%;
+}
+
+.default-language-form-control-label{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.language-choice-container{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.language-choice-text{
+  color: black;
+  margin-left: 10px;
+}
+
+.default-language-button-container{
+  height: 100%;
+  display: flex;
+  direction: row;
+  align-items: end;
+}
+
+.default-language-button{
+  height: auto;
 }

@@ -1,13 +1,14 @@
 import knex from "./dbConnection.js";
 
-async function postUser(email, username, password, nativeLanguageId) {
-  await knex("users").insert({
+async function postUser(email, username, password, nativeLanguageId, name) {
+  const id = await knex("users").insert({
     email,
     username,
     password,
     native_language_id: nativeLanguageId,
-  });
-  return;
+    first_name: name,
+  }).returning("id");
+  return id[0].id;
 }
 
 async function getHashByUsername(username) {
@@ -25,6 +26,7 @@ async function getUser({ id, username }) {
       "users.id",
       "users.username",
       "users.email",
+      "users.first_name",
       "languages.id as native_language_id",
       "languages.name as native_language_name",
       "languages.code as native_language_code"
@@ -60,6 +62,7 @@ async function getUser({ id, username }) {
   return {
     id: userData.id,
     username: userData.username,
+    first_name: userData.first_name,
     email: userData.email,
     native_language,
     my_languages: learningLanguages,
@@ -82,10 +85,10 @@ async function checkEmail(email) {
   return data[0];
 }
 
-async function postUserLanguage(newLanguage, userId, isDefault) {
+async function postUserLanguage(newLanguageId, userId, isDefault) {
   await knex("users_languages").insert({
     user_id: userId,
-    language_id: newLanguage.id,
+    language_id: newLanguageId,
     is_default: isDefault
   });
   return;

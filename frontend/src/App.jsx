@@ -1,4 +1,15 @@
 //TODO - add a modal to show the user that they are about to be logged out
+//fix signup native language box styling
+//profile picture or the first letter of their name
+//profile page styling
+//Make level (based on score) for each language
+//fix the language select box in the signup form
+//add a delete language card to profile page
+//Change user detail in profile card
+//Create a leaderboard card on profile page - display language scores/levels/progress bar
+//practice weak words flash card mode
+//practice all words flash card mode
+//lightning flashcard mode
 
 // App.jsx
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
@@ -15,6 +26,7 @@ import { useDispatch } from "react-redux";
 import { loadLanguages } from "./state/languageSlice.js";
 import GetUsers from "./data-fetch/GetUser.jsx";
 import useTokenWatchdog from "./utilities/useTokenWatchdog.js";
+import Flashcards from "./pages/Flashcards.jsx";
 
 
 function App() {
@@ -54,6 +66,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/mywords" element={<MyWords />} />
           <Route path = "/profile" element={<Profile/>}/>
+          <Route path = "/flashcards" element={<Flashcards/>}/>
         </Route>
 
         {/* Fallback Route */}

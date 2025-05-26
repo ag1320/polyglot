@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  postUser,
-  checkUsername,
-  checkEmail,
-} from "../utilities/serverCalls";
+import { postUser, checkUsername, checkEmail } from "../utilities/serverCalls";
 import "../styling/Signup.css";
 import { TextField, Typography, Snackbar, Alert } from "@mui/material";
 import CustomButton from "../components/CustomButton";
@@ -12,11 +8,13 @@ import { useSelector } from "react-redux";
 
 const Signup = () => {
   // user
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVerify, setPasswordVerify] = useState("");
-  const [nativeLanguage, setNativeLanguage] = useState("");
+  const [nativeLanguage, setNativeLanguage] = useState({});
+  const [learningLanguage, setLearningLanguage] = useState({});
 
   // error checking
   const [usernameError, setUsernameError] = useState(false);
@@ -24,8 +22,8 @@ const Signup = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
-  
-  const allLanguages = useSelector((state) => state.languages.allLanguages)
+  const allLanguages = useSelector((state) => state.languages.allLanguages);
+  const [allLearningLanguages, setAllLearningLanguages] = useState(allLanguages);
 
 
   // // fetch languages
@@ -41,7 +39,6 @@ const Signup = () => {
   // useEffect(() => {
   //   fetchData();
   // }, []);
- 
 
   const addUser = async () => {
     if (usernameError) {
@@ -52,7 +49,7 @@ const Signup = () => {
       console.error("Email is already associated with an account");
       return;
     }
-    if (!email || !username || !password || !nativeLanguage) {
+    if (!email || !username || !password || !nativeLanguage || !name) {
       console.error("All fields are required");
       setErrorMessage("All fields are required");
       return;
@@ -65,20 +62,41 @@ const Signup = () => {
     }
 
     try {
-      await postUser(email, username, password, nativeLanguage.id);
+      await postUser(email, username, password, nativeLanguage.id, learningLanguage.id, name);
       setEmail("");
       setUsername("");
       setPassword("");
       setPasswordVerify("");
-      setNativeLanguage("");
+      setNativeLanguage({});
+      setLearningLanguage({});
+      setName("");
       setSuccess(true);
     } catch (err) {
       setErrorMessage(err.message);
     }
   };
 
-  const handleLanguageChange = (event) => {
-    setNativeLanguage(event.target.value);
+const handleNativeLanguageChange = (e) => {
+  const selectedLang = allLanguages.find(
+    (language) => language.id === e.target.value
+  );
+  setNativeLanguage(selectedLang);
+
+  const filtered = allLanguages.filter((lang) => lang.id !== selectedLang.id);
+  setAllLearningLanguages(filtered);
+
+  // Reset learning language if it matches the new native language
+  if (learningLanguage?.id === selectedLang.id) {
+    setLearningLanguage({});
+  }
+};
+
+
+  const handleLearningLanguageChange = (e) => {
+    const selectedLang = allLearningLanguages.find(
+      (language) => language.id === e.target.value
+    );
+    setLearningLanguage(selectedLang);
   };
 
   const handleErrorClose = () => {
@@ -121,6 +139,15 @@ const Signup = () => {
         Signup
       </Typography>
       {/* Email TextField */}
+      <TextField
+        label="Name"
+        variant="outlined"
+        required
+        fullWidth
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        margin="normal"
+      />
       <TextField
         label="Email"
         variant="outlined"
@@ -179,9 +206,17 @@ const Signup = () => {
       <LanguageSelect
         allLanguages={allLanguages}
         selectedLanguage={nativeLanguage}
-        handleLanguageChange={handleLanguageChange}
+        handleLanguageChange={handleNativeLanguageChange}
         inputLabel="Native Language"
-        mode="full"
+        mode="signup"
+      />
+
+      <LanguageSelect
+        allLanguages={allLearningLanguages}
+        selectedLanguage={learningLanguage}
+        handleLanguageChange={handleLearningLanguageChange}
+        inputLabel="1st Language"
+        mode="signup"
       />
 
       {/* Submit Button */}

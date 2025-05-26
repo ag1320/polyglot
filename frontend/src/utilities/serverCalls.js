@@ -1,13 +1,15 @@
 import axios from "axios";
 
 //USERS LOGIN AND SIGN UP
-async function postUser(email, username, password, nativeLanguageId) {
+async function postUser(email, username, password, nativeLanguageId, learningLanguageId, name) {
   try {
     let payload = {
       email,
       username,
       password,
       nativeLanguageId,
+      learningLanguageId,
+      name
     };
     await axios.post("https://localhost:3001/users", payload);
     return;

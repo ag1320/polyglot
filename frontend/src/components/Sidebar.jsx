@@ -3,6 +3,7 @@ import pip from "../../images/Pip.png";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { IconButton, Tooltip } from "@mui/material";
 import TranslateIcon from "@mui/icons-material/Translate";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import PublicIcon from "@mui/icons-material/Public";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,13 +27,13 @@ const Sidebar = () => {
   };
 
   const handleLanguageChange = (event) => {
+    console.log("event.target.value:", event.target.value);
     const selectedLang = userLanguages.find(
       (language) => language.id === event.target.value
     );
     dispatch(setSelectedLanguage(selectedLang));
   };
 
-  console.log("Selected Language:", selectedLanguage);
 
   return (
     <aside className="sidebar">
@@ -72,9 +73,13 @@ const Sidebar = () => {
             </IconButton>
           </Link>
         </Tooltip>
-        <IconButton className="sidebar-icon-button">
-          <TranslateIcon className="sidebar-icon" fontSize="large" />
-        </IconButton>
+        <Tooltip title="Flashcards" arrow placement="top">
+          <Link to="/flashcards" className="sidebard-link">
+            <IconButton className="sidebar-icon-button">
+              <LibraryBooksIcon className="sidebar-icon" fontSize="large" />
+            </IconButton>
+          </Link>
+        </Tooltip>
         <IconButton className="sidebar-icon-button">
           <PublicIcon className="sidebar-icon" fontSize="large" />
         </IconButton>

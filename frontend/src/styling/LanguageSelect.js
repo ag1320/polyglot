@@ -120,3 +120,52 @@ export const AddLanguageMenuItem = styled(MenuItem)(({ theme }) => {
     },
   };
 });
+
+// --- FormControl ---
+export const SignupLanguageFormControl = styled(FormControl)({
+  backgroundColor: white, // Background behind the select input
+  color: black,           // Text color
+});
+
+
+// --- InputLabel ---
+export const SignupLanguageInputLabel = styled(InputLabel) ({
+  color: black // Label text color
+});
+
+// --- Select ---
+export const SignupLanguageSelect = styled(Select)({
+  backgroundColor: white,
+
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: black,
+  },
+
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: black,
+  },
+
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: black,
+  },
+});
+
+
+// --- MenuItem ---
+export const SignupLanguageMenuItem = styled(MenuItem)(({ theme }) => {
+  const lightBlue = theme.palette.secondary.main;
+
+  return {
+    backgroundColor: "#fff", // Background color
+    color: "#000", // Text color
+
+    "&:hover": {
+      backgroundColor: lightBlue, // Slightly lighter on hover
+      color: "#fff", // Hover item text color
+    },
+    "&&.Mui-selected": {
+      backgroundColor: lightBlue, // Selected item background
+      color: "#fff", // Selected item text color
+    },
+  };
+});
