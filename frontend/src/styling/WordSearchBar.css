@@ -1,0 +1,29 @@
+/* === WordSearchBar component styles === */
+
+/* Input field root */
+.wordsearch-textbox .MuiOutlinedInput-root {
+  border-radius: 6px;
+  background-color: #474973;
+  transition: all 0.2s ease;
+}
+
+/* Default border */
+.wordsearch-textbox .MuiOutlinedInput-notchedOutline {
+  border-color: #fff;
+}
+
+/* Border on hover */
+.wordsearch-textbox:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #888;
+}
+
+/* Border and glow on focus */
+.wordsearch-textbox .Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #5e3960;
+}
+
+/* Focused label color */
+.wordsearch-textbox .MuiInputLabel-root.Mui-focused {
+  color: #fff;
+}
+

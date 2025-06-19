@@ -18,7 +18,7 @@ const MyLanguagesCard = () => {
             {myLanguages.map((lang) => (
               <div key={lang.code} className="language-chip">
                 <img
-                  src={`https://flagcdn.com/${lang.code}.svg`}
+                  src={`https://flagcdn.com/${lang.flag_code}.svg`}
                   alt={`${lang.name} flag`}
                   className="language-flag"
                 />

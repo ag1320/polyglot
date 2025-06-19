@@ -3,6 +3,7 @@ export async function up(knex) {
     table.increments('id').primary();
     table.string('name').notNullable();
     table.string('code').notNullable();
+    table.string('flag_code').notNullable();
   });
 }
 

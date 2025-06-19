@@ -92,13 +92,9 @@ const userSlice = createSlice({
       // UPDATE USER
       .addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload;
-
-        console.log("Updated User:", action.payload);
         const defaultLang = action.payload.my_languages?.find(
           (lang) => lang.is_default
         );
-
-        console.log("Default Language:", defaultLang);
         state.selectedLanguage = defaultLang || null;
       })
       .addCase(updateUser.rejected, (state, action) => {

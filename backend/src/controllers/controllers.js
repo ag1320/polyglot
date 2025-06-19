@@ -16,6 +16,55 @@ async function getHashByUsername(username) {
   return data[0].password;
 }
 
+// user helpers
+const getNativeLanguageForUser = (userData) => ({
+  id: userData.native_language_id,
+  name: userData.native_language_name,
+  code: userData.native_language_code,
+  flag_code: userData.native_language_flag_code
+});
+
+const getLearningLanguagesForUser = async (userId, knex) => {
+  return await knex("users_languages")
+    .join("languages", "users_languages.language_id", "languages.id")
+    .select(
+      "languages.id",
+      "languages.name",
+      "languages.code",
+      "languages.flag_code",
+      "users_languages.is_default"
+    )
+    .where("users_languages.user_id", userId);
+};
+
+const getWordsForUser = async (userId, knex) => {
+  return await knex("words")
+    .where("user_id", userId)
+    .select(
+      "id",
+      "language_source_id",
+      "language_target_id",
+      "word_in_source_language",
+      "word_in_target_language",
+      "score",
+      "correct_attempts",
+      "incorrect_attempts",
+      "total_attempts",
+      "current_correct_streak",
+      "current_incorrect_streak",
+      "last_tested_at",
+      "exposure_count",
+      "mastery_level",
+      "recall_accuracy",
+      "example_sentence",
+      "notes",
+      "is_favorite",
+      "ignore_word",
+      "created_at",
+      "updated_at"
+    );
+};
+
 async function getUser({ id, username }) {
   if (!id && !username) {
     throw new Error("Must provide either 'id' or 'username' to get user");
@@ -29,7 +78,8 @@ async function getUser({ id, username }) {
       "users.first_name",
       "languages.id as native_language_id",
       "languages.name as native_language_name",
-      "languages.code as native_language_code"
+      "languages.code as native_language_code",
+      "languages.flag_code as native_language_flag_code"
     )
     .leftJoin("languages", "users.native_language_id", "languages.id");
 
@@ -40,24 +90,11 @@ async function getUser({ id, username }) {
   }
 
   const userData = await query.first();
-
   if (!userData) return null;
 
-  const native_language = {
-    id: userData.native_language_id,
-    name: userData.native_language_name,
-    code: userData.native_language_code,
-  };
-
-  const learningLanguages = await knex("users_languages")
-    .join("languages", "users_languages.language_id", "languages.id")
-    .select(
-      "languages.id",
-      "languages.name",
-      "languages.code",
-      "users_languages.is_default"
-    )
-    .where("users_languages.user_id", userData.id);
+  const native_language = getNativeLanguageForUser(userData);
+  const my_languages = await getLearningLanguagesForUser(userData.id, knex);
+  const words = await getWordsForUser(userData.id, knex);
 
   return {
     id: userData.id,
@@ -65,11 +102,10 @@ async function getUser({ id, username }) {
     first_name: userData.first_name,
     email: userData.email,
     native_language,
-    my_languages: learningLanguages,
+    my_languages,
+    words
   };
 }
-
-
 
 async function getLanguages() {
   return await knex("languages").select("*");
@@ -108,6 +144,18 @@ async function postUserLanguageDefault(language_id, user_id) {
   return;
 }
 
+//WORDS
+async function postWord(sourceWord, translatedWord, sourceLangId, targetLangId, userId) {
+  await knex("words").insert({
+    user_id: userId,
+    language_source_id: sourceLangId,
+    language_target_id: targetLangId,
+    word_in_source_language: sourceWord,
+    word_in_target_language: translatedWord
+  });
+  return;
+}
+
 
 export {
   postUser,
@@ -117,5 +165,6 @@ export {
   checkEmail,
   getUser,
   postUserLanguage,
-  postUserLanguageDefault
+  postUserLanguageDefault,
+  postWord
 };

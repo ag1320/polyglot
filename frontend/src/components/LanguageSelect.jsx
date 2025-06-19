@@ -30,8 +30,6 @@ const LanguageSelect = ({
     a.name.toLowerCase().localeCompare(b.name.toLowerCase())
   );
 
-  console.log("selectedLanguage:", selectedLanguage);
-
   return (
     <>
       {mode === "mini" ? (
@@ -54,7 +52,7 @@ const LanguageSelect = ({
               return selectedLang ? (
                 <Box className="language-select-flag-container">
                   <img
-                    src={`https://flagcdn.com/${selectedLang.code}.svg`}
+                    src={`https://flagcdn.com/${selectedLang.flag_code}.svg`}
                     alt={`${selectedLang.name} flag`}
                     className="flag-icon"
                   />
@@ -71,7 +69,7 @@ const LanguageSelect = ({
                   placement="top"
                 >
                   <img
-                    src={`https://flagcdn.com/${language.code}.svg`}
+                    src={`https://flagcdn.com/${language.flag_code}.svg`}
                     alt={`${language.name} flag`}
                     className="flag-icon"
                   />
@@ -104,7 +102,7 @@ const LanguageSelect = ({
                 return selectedLang ? (
                   <Box className="language-select-flag-container">
                     <img
-                      src={`https://flagcdn.com/${selectedLang.code}.svg`}
+                      src={`https://flagcdn.com/${selectedLang.flag_code}.svg`}
                       alt={`${selectedLang.name} flag`}
                       className="flag-icon"
                     />
@@ -118,7 +116,7 @@ const LanguageSelect = ({
               {sortedLanguages.map((language) => (
                 <SignupLanguageMenuItem key={language.code} value={language.id}>
                   <img
-                    src={`https://flagcdn.com/${language.code}.svg`}
+                    src={`https://flagcdn.com/${language.flag_code}.svg`}
                     alt={`${language.name} flag`}
                     className="flag-icon"
                   />
@@ -149,7 +147,7 @@ const LanguageSelect = ({
               return selectedLang ? (
                 <Box className="language-select-flag-container">
                   <img
-                    src={`https://flagcdn.com/${selectedLang.code}.svg`}
+                    src={`https://flagcdn.com/${selectedLang.flga_code}.svg`}
                     alt={`${selectedLang.name} flag`}
                     className="flag-icon"
                   />
@@ -163,7 +161,7 @@ const LanguageSelect = ({
             {sortedLanguages.map((language) => (
               <AddLanguageMenuItem key={language.code} value={language.id}>
                 <img
-                  src={`https://flagcdn.com/${language.code}.svg`}
+                  src={`https://flagcdn.com/${language.flag_code}.svg`}
                   alt={`${language.name} flag`}
                   className="flag-icon"
                 />

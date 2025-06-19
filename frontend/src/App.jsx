@@ -10,6 +10,12 @@
 //practice weak words flash card mode
 //practice all words flash card mode
 //lightning flashcard mode
+//clip art for each word
+//audio clip for each word
+// optimize add word search bar, batch translate words?
+// make a button on the add word search bar to find alternative translations
+// undo adding previous word
+//add a reset word parameters/stats feature
 
 // App.jsx
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";

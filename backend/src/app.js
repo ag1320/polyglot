@@ -6,6 +6,7 @@ import languageRoutes from "./routes/languageRoutes.js";
 import fs from 'fs';
 import https from 'https';
 import path from 'path';
+import wordsRoutes from "./routes/wordsRoutes.js";
 // import axios from "axios";
 // import controllers from "./controllers/controllers.js";  
 
@@ -43,6 +44,7 @@ app.use((req, res, next) => {
 // Routes
 app.use(userRoutes);
 app.use(languageRoutes);
+app.use(wordsRoutes);
 
 //self signed ssl cert
 const httpsOptions = {

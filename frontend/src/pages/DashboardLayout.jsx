@@ -8,7 +8,8 @@ const CustomCard = styled(Card)(({theme}) => ({
   backgroundColor: theme.palette.backgroundSecondary.main,
   margin: "10px",
   padding: "30px",
-  borderRadius: "25px"
+  borderRadius: "25px",
+  height: "calc(100vh - 20px)",
 }));
 
 const DashboardLayout = () => {

@@ -57,7 +57,7 @@ const DefaultLanguageSelectorCard = () => {
               label={
                 <div className="language-choice-container">
                   <img
-                    src={`https://flagcdn.com/${lang.code}.svg`}
+                    src={`https://flagcdn.com/${lang.flag_code}.svg`}
                     alt={`${lang.name} flag`}
                     className="flag-icon"
                   />

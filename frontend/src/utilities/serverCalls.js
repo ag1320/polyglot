@@ -1,7 +1,14 @@
 import axios from "axios";
 
 //USERS LOGIN AND SIGN UP
-async function postUser(email, username, password, nativeLanguageId, learningLanguageId, name) {
+async function postUser(
+  email,
+  username,
+  password,
+  nativeLanguageId,
+  learningLanguageId,
+  name
+) {
   try {
     let payload = {
       email,
@@ -9,7 +16,7 @@ async function postUser(email, username, password, nativeLanguageId, learningLan
       password,
       nativeLanguageId,
       learningLanguageId,
-      name
+      name,
     };
     await axios.post("https://localhost:3001/users", payload);
     return;
@@ -79,18 +86,53 @@ async function checkEmail(email) {
 }
 
 //translation
-async function translateWord(word, sourceLanguageId, targetLanguageId) {
+async function translateWord(word, sourceLanguageCode, targetLanguageCode) {
+  const token = localStorage.getItem("token");
   const payload = {
-    text: word,
-    from: sourceLanguageId,
-    to: targetLanguageId,
+    word,
+    from: sourceLanguageCode,
+    to: targetLanguageCode,
   };
   try {
     const response = await axios.post(
-      "https://localhost:3001/translate",
-      payload
+      "https://localhost:3001/translate-word",
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-    return response.data;
+    return response.data.translated;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+
+//translation
+async function batchTranslateWords(
+  words,
+  sourceLanguageCode,
+  targetLanguageCode
+) {
+  const token = localStorage.getItem("token");
+  const payload = {
+    words,
+    from: sourceLanguageCode,
+    to: targetLanguageCode,
+  };
+  try {
+    const response = await axios.post(
+      "https://localhost:3001/translate-words",
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.translated;
   } catch (err) {
     console.log(err);
     return;
@@ -125,26 +167,43 @@ async function postNewUserLanguage(newLanguage, isDefault) {
 async function postNewDefaultLanguage(languageId) {
   const token = localStorage.getItem("token");
   const payload = {
-    languageId
-  }
+    languageId,
+  };
 
-   try {
-    await axios.post(
-      "https://localhost:3001/user-language-default",
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return
+  try {
+    await axios.post("https://localhost:3001/user-language-default", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return;
   } catch (err) {
     console.log(err);
     return;
   }
 }
 
+async function postWord(sourceWord, translatedWord, sourceLangId, targetLangId) {
+  const token = localStorage.getItem("token");
+  const payload = {
+    sourceWord,
+    translatedWord,
+    sourceLangId,
+    targetLangId
+  };
+
+  try {
+    await axios.post("https://localhost:3001/words", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
 
 export {
   postUser,
@@ -155,5 +214,7 @@ export {
   translateWord,
   postNewUserLanguage,
   getUser,
-  postNewDefaultLanguage
+  postNewDefaultLanguage,
+  batchTranslateWords,
+  postWord
 };
