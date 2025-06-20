@@ -15,6 +15,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Typography
 } from "@mui/material";
 
 export default function WordSearchBar() {
@@ -23,10 +24,17 @@ export default function WordSearchBar() {
   const dispatch = useDispatch();
 
   // Get full language objects
-  const sourceLanguage = useSelector((state) => state?.user?.user?.native_language);
+  const sourceLanguage = useSelector(
+    (state) => state?.user?.user?.native_language
+  );
   const targetLanguage = useSelector((state) => state?.user?.selectedLanguage);
 
-  const addWord = async (sourceWord, translatedWord, sourceLangId, targetLangId) => {
+  const addWord = async (
+    sourceWord,
+    translatedWord,
+    sourceLangId,
+    targetLangId
+  ) => {
     await postWord(sourceWord, translatedWord, sourceLangId, targetLangId);
     await dispatch(updateUser()).unwrap();
   };
@@ -99,7 +107,12 @@ export default function WordSearchBar() {
   }));
 
   const handleSelect = (item) => {
-    addWord(item.source, item.translated, sourceLanguage?.id, targetLanguage?.id);
+    addWord(
+      item.source,
+      item.translated,
+      sourceLanguage?.id,
+      targetLanguage?.id
+    );
     setInput("");
     setSourceWords([]);
     setTranslatedWords([]);
@@ -131,72 +144,82 @@ export default function WordSearchBar() {
   };
 
   return (
-    <Box sx={{ position: "relative", maxWidth: 400, mx: "auto", mt: 6 }}>
-      <TextField
-        fullWidth
-        inputRef={inputRef}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={handleKeyDown}
-        label="Type to add a word"
-        variant="outlined"
-        className="wordsearch-textbox"
-        slotProps={{
-          input: {
-            endAdornment: input && (
-              <span
-                onClick={() => setInput("")}
-                style={{
-                  cursor: "pointer",
-                  marginRight: 8,
-                  color: "#ccc",
-                  fontSize: "1.2rem",
-                }}
-                title="Clear"
-              >
-                ×
-              </span>
-            ),
-          },
-        }}
-      />
-
-      {isDropdownVisible && suggestions.length > 0 && (
-        <Paper
-          elevation={3}
-          sx={{
-            position: "absolute",
-            width: "100%",
-            zIndex: 10,
-            mt: 1,
-            maxHeight: 240,
-            overflowY: "auto",
-            backgroundColor: "#474973",
+    <Box className="wordsearch-container">
+      <div className="wordsearch-textbox-container">
+        <TextField
+          fullWidth
+          inputRef={inputRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          label="Type to add a word"
+          variant="outlined"
+          className="wordsearch-textbox"
+          slotProps={{
+            input: {
+              endAdornment: input && (
+                <span
+                  onClick={() => setInput("")}
+                  style={{
+                    cursor: "pointer",
+                    marginRight: 8,
+                    color: "#ccc",
+                    fontSize: "1.2rem",
+                  }}
+                  title="Clear"
+                >
+                  ×
+                </span>
+              ),
+            },
           }}
-        >
-          <List className="wordsearch-list">
-            {suggestions?.map((item, idx) => (
-              <ListItem
-                key={idx}
-                button
-                onClick={() => handleSelect(item)}
-                selected={idx === highlightedIndex}
-                sx={{
-                  backgroundColor:
-                    idx === highlightedIndex ? "#A69CAC" : "inherit",
-                  cursor: "pointer",
-                  "&:hover": {
+        />
+
+        {isDropdownVisible && suggestions.length > 0 && (
+          <Paper
+            elevation={3}
+            className="wordsearch-dropdown"
+            sx={{
+              position: "absolute",
+              width: "600px",
+              zIndex: 10,
+              top: "100%",
+              maxHeight: 240,
+              overflowY: "auto",
+              backgroundColor: "#fff",
+            }}
+          >
+            <List className="wordsearch-list">
+              {suggestions?.map((item, idx) => (
+                <ListItem
+                  key={idx}
+                  button
+                  onClick={() => handleSelect(item)}
+                  selected={idx === highlightedIndex}
+                  sx={{
                     backgroundColor:
-                      idx === highlightedIndex ? "#A69CAC" : "#D3D0D8",
-                  },
-                }}
-              >
-                <ListItemText primary={`${item.source} – ${item.translated}`} />
-              </ListItem>
-            ))}
-          </List>
-        </Paper>
-      )}
+                      idx === highlightedIndex ? "#A69CAC" : "inherit",
+                    cursor: "pointer",
+                    "&:hover": {
+                      backgroundColor:
+                        idx === highlightedIndex ? "#A69CAC" : "#D3D0D8",
+                    },
+                  }}
+                >
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography variant="h6" sx={{ color: "#000" }} align={"center"}>
+                        {`${item.source} – ${item.translated}`}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        )}
+      </div>
     </Box>
   );
 }

@@ -1,0 +1,33 @@
+.my-words-card-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.my-words-card{
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  background-color: #474973 !important;
+}
+
+.my-words-subtext{
+  color: #fff;
+}
+
+.my-words-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.my-words-item:hover{
+  background-color: #161B33;
+}
+
+.speaker-icon{
+  color: #fff;
+}

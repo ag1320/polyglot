@@ -16,6 +16,9 @@
 // make a button on the add word search bar to find alternative translations
 // undo adding previous word
 //add a reset word parameters/stats feature
+// make custom word add (for words not in the 10000 most common words)
+//do not allow user to submit duplicate word combos
+//signout tooltip above the icon
 
 // App.jsx
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
