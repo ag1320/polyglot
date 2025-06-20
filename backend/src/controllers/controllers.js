@@ -32,7 +32,8 @@ const getLearningLanguagesForUser = async (userId, knex) => {
       "languages.name",
       "languages.code",
       "languages.flag_code",
-      "users_languages.is_default"
+      "users_languages.is_default",
+      "users_languages.voice"
     )
     .where("users_languages.user_id", userId);
 };
@@ -144,6 +145,13 @@ async function postUserLanguageDefault(language_id, user_id) {
   return;
 }
 
+async function postUserLanguageVoice(voice, language_id, user_id) {
+  await knex("users_languages")
+    .where({ user_id, language_id })
+    .update({ voice });
+  return;
+}
+
 //WORDS
 async function postWord(sourceWord, translatedWord, sourceLangId, targetLangId, userId) {
   await knex("words").insert({
@@ -166,5 +174,6 @@ export {
   getUser,
   postUserLanguage,
   postUserLanguageDefault,
-  postWord
+  postWord,
+  postUserLanguageVoice
 };

@@ -9,6 +9,7 @@ import {
   getUser,
   postUserLanguage,
   postUserLanguageDefault,
+  postUserLanguageVoice
 } from "../controllers/controllers.js";
 import {
   hashPassword,
@@ -137,6 +138,19 @@ router.post("/user-language-default", authenticateToken, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to change language default");
+  }
+});
+
+router.post("/user-language-voice", authenticateToken, async (req, res) => {
+  const { voice, languageId } = req.body;
+  const userId = req.user.id;
+  console.log("Received new voice:", { voice, languageId, userId });
+  try {
+    await postUserLanguageVoice(voice, languageId, userId);
+    res.status(201).json({ message: "Voice preference changed" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to change voice preference");
   }
 });
 

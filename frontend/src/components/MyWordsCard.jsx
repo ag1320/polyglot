@@ -12,9 +12,11 @@ import {
 } from "@mui/material";
 import "../styling/MyWordsCard.css";
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import { sayWord } from "../utilities/helperFunctions.js";
 
 const MyWordsCard = () => {
   const words = useSelector((state) => state.user.user?.words || []);
+  const user = useSelector((state) => state.user?.user || {});
   const [expandedIndex, setExpandedIndex] = useState(null);
 
   // Pagination setup
@@ -34,6 +36,12 @@ const MyWordsCard = () => {
   const toggleExpand = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
+
+  const executeAudioSequence = (e, word) => {
+    e.stopPropagation(); // Prevent the click from toggling the collapse
+    const voice = user.my_languages.find((lang) => lang.id === word.language_target_id)?.voice;
+    sayWord(voice, word.word_in_target_language);
+  }
 
   return (
     <Box className="my-words-card-container">
@@ -57,10 +65,7 @@ const MyWordsCard = () => {
                     </Typography>
                   </Box>
                   <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent expand toggle
-                      // Custom icon behavior here later
-                    }}
+                    onClick = {(e) => executeAudioSequence(e, word)}
                   >
                     <VolumeUpIcon className="speaker-icon"/>
                   </IconButton>

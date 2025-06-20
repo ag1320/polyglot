@@ -1,0 +1,12 @@
+.choose-voice-container{
+  margin-top: 10px;
+  width: 100%;
+}
+
+.choose-voice-title{
+  color: #000
+}
+
+.voice-radio-label .MuiFormControlLabel-label {
+  color: #000;
+}

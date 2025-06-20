@@ -1,7 +1,11 @@
 import { Grid } from "@mui/material";
-import AddLanguageCard from "../components/AddLanguageCard";
-import DefaultLanguageSelectorCard from "../components/DefaultLanguageSelectorCard.jsx";
-import ProfileCard from "../components/ProfileCard.jsx";
+import AddLanguage from "../components/AddLanguage";
+import DefaultLanguageSelector from "../components/DefaultLanguageSelector.jsx";
+import ChooseVoices from "../components/ChooseVoices.jsx";
+import ProfileDetails from "../components/ProfileDetails.jsx";
+import MyLevel from "../components/MyLevel.jsx";
+import { Card } from "@mui/material";
+import "../styling/Profile.css";
 
 const Profile = () => {
   return (
@@ -14,13 +18,29 @@ const Profile = () => {
       }}
     >
       <Grid size={4}>
-        <ProfileCard />
+        <Card className="profile-card">
+          <ProfileDetails />
+        </Card>
       </Grid>
       <Grid size={4}>
-        <AddLanguageCard />
+        <Card className="profile-card">
+          <AddLanguage />
+        </Card>
       </Grid>
       <Grid size={4}>
-        <DefaultLanguageSelectorCard />
+        <Card className="profile-card">
+          <DefaultLanguageSelector />
+        </Card>
+      </Grid>
+      <Grid size={4}>
+        <Card className="profile-card">
+          <ChooseVoices />
+        </Card>
+      </Grid>
+      <Grid size={4}>
+        <Card className="profile-card">
+          <MyLevel />
+        </Card>
       </Grid>
     </Grid>
   );

@@ -8,12 +8,12 @@ import {
   Card,
   Typography,
 } from "@mui/material";
-import CustomButton from "./CustomButton";
-import { updateUser } from "../state/userSlice";
+import CustomButton from "./CustomButton.jsx";
+import { updateUser } from "../state/userSlice.js";
 import { postNewDefaultLanguage } from "../utilities/serverCalls.js";
-import "../styling/DefaultLanguageSelectorCard.css";
+import "../styling/DefaultLanguageSelector.css";
 
-const DefaultLanguageSelectorCard = () => {
+const DefaultLanguageSelector = () => {
   const dispatch = useDispatch();
   const myLanguages = useSelector(
     (state) => state.user.user?.my_languages || []
@@ -42,7 +42,7 @@ const DefaultLanguageSelectorCard = () => {
   };
 
   return (
-    <Card className="default-language-card">
+    <>
       <Typography variant="h5" className="default-language-text">
         Select a Default Language
       </Typography>
@@ -75,8 +75,8 @@ const DefaultLanguageSelectorCard = () => {
           />
         </div>
       </FormControl>
-    </Card>
+    </>
   );
 };
 
-export default DefaultLanguageSelectorCard;
+export default DefaultLanguageSelector;

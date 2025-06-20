@@ -205,6 +205,58 @@ async function postWord(sourceWord, translatedWord, sourceLangId, targetLangId) 
   }
 }
 
+async function fetchVoices() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await axios.get("https://localhost:3001/voices", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+
+async function getAudio(voice, text) {
+  const token = localStorage.getItem("token");
+  const response = await axios.get("https://localhost:3001/audio", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      voice,
+      text,
+    },
+    responseType: "arraybuffer"
+  });
+  return response.data;
+}
+
+async function postVoicePreference(voice, languageId) {
+  const token = localStorage.getItem("token");
+  const payload = {
+    voice,
+    languageId,
+  };
+
+  try {
+    await axios.post("https://localhost:3001/user-language-voice", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+
+
 export {
   postUser,
   verifyUser,
@@ -216,5 +268,8 @@ export {
   getUser,
   postNewDefaultLanguage,
   batchTranslateWords,
-  postWord
+  postWord,
+  fetchVoices,
+  getAudio,
+  postVoicePreference
 };

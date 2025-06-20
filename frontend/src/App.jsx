@@ -19,6 +19,7 @@
 // make custom word add (for words not in the 10000 most common words)
 //do not allow user to submit duplicate word combos
 //signout tooltip above the icon
+//filter words by language
 
 // App.jsx
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
@@ -33,6 +34,7 @@ import MyWords from "./pages/MyWords.jsx";
 import DashboardLayout from "./pages/DashboardLayout.jsx";
 import { useDispatch } from "react-redux";
 import { loadLanguages } from "./state/languageSlice.js";
+import { loadVoices } from "./state/audioSlice.js";
 import GetUsers from "./data-fetch/GetUser.jsx";
 import useTokenWatchdog from "./utilities/useTokenWatchdog.js";
 import Flashcards from "./pages/Flashcards.jsx";
@@ -54,8 +56,10 @@ function App() {
 
   useEffect(() => {
     dispatch(loadLanguages());
+    dispatch(loadVoices());
     //eslint-disable-next-line
   }, []);
+
 
   return (
     <>

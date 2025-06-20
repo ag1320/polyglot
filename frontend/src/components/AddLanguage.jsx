@@ -1,14 +1,14 @@
 import { Card } from "@mui/material";
-import LanguageSelect from "../components/LanguageSelect";
+import LanguageSelect from "./LanguageSelect.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
-import CustomButton from "../components/CustomButton.jsx";
+import CustomButton from "./CustomButton.jsx";
 import { postNewUserLanguage } from "../utilities/serverCalls.js";
 import { updateUser } from "../state/userSlice.js";
 import { Typography } from "@mui/material";
-import "../styling/AddLanguageCard.css";
+import "../styling/AddLanguage.css";
 
-const AddLanguageCard = () => {
+const AddLanguage = () => {
   const [newLanguage, setNewLanguage] = useState({});
 
   const allLanguages = useSelector((state) => state.languages.allLanguages);
@@ -39,7 +39,7 @@ const allLanguagesFiltered = allLanguages.filter(
 
 
   return (
-    <Card className="add-language-card">
+    <>
       <Typography variant="h5" color="black">
         Start Learning a New Language
       </Typography>
@@ -57,8 +57,8 @@ const allLanguagesFiltered = allLanguages.filter(
           buttonText={"Submit"}
         />
       </div>
-    </Card>
+    </>
   );
 };
 
-export default AddLanguageCard;
+export default AddLanguage;

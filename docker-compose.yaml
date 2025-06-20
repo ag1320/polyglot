@@ -55,6 +55,14 @@ services:
     volumes:
       - ./lt-models:/home/libretranslate/.local
     restart: unless-stopped
+  opentts:
+    image: synesthesiam/opentts
+    ports:
+      - "5500:5500"
+    env_file:
+      - .env
+    networks:
+      - network1
 
 networks:
   network1:

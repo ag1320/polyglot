@@ -12,8 +12,8 @@ export async function up(knex) {
       .references('id').inTable('languages')
       .onDelete('CASCADE');
 
-    // Optional: mark a default or preferred language
     table.boolean('is_default').defaultTo(false);
+    table.string("voice").defaultTo(null);
 
     // Ensure uniqueness (a user can't learn the same language twice)
     table.unique(['user_id', 'language_id']);
