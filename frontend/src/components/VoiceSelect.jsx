@@ -3,7 +3,12 @@ import { sayWord } from "../utilities/helperFunctions.js";
 import { List, ListItem, ListItemText, Paper } from "@mui/material";
 import "../styling/VoiceSelect.css";
 
-const VoiceSelect = ({ voices, setSelectedVoiceTitle }) => {
+const VoiceSelect = ({
+  voices,
+  setSelectedVoiceTitle,
+  wordToSpeak,
+  preselectedIndex,
+}) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const listRef = useRef([]);
 
@@ -20,18 +25,27 @@ const VoiceSelect = ({ voices, setSelectedVoiceTitle }) => {
     setSelectedIndex(index);
     setSelectedVoiceTitle(voices[index].title);
     listRef.current[index]?.focus();
-    sayWord(voices[index].title, "hello");
+    sayWord(voices[index].title, wordToSpeak);
   };
 
-  useEffect(
-    () => {
-      if (voices.length > 0) {
-        setSelectedVoiceTitle(voices[0].title);
-      }
-    },
+  useEffect(() => {
+    if (voices.length > 0) {
+      const indexToUse = preselectedIndex || 0;
+      setSelectedIndex(indexToUse);
+      setSelectedVoiceTitle(voices[indexToUse]?.title || "");
+    }
     //eslint-disable-next-line
-    [voices]
-  );
+  }, [voices]);
+
+  useEffect(() => {
+    const selectedItem = listRef.current[selectedIndex];
+    if (selectedItem) {
+      selectedItem.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [selectedIndex]);
 
   return (
     <div>
@@ -52,7 +66,7 @@ const VoiceSelect = ({ voices, setSelectedVoiceTitle }) => {
               onClick={() => {
                 setSelectedIndex(index);
                 setSelectedVoiceTitle(voices[index].title);
-                sayWord(voices[index].title, "hello");
+                sayWord(voices[index].title, wordToSpeak);
               }}
             >
               <ListItemText

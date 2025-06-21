@@ -91,6 +91,10 @@ async function checkEmail(email) {
 
 //translation
 async function translateWord(word, sourceLanguageCode, targetLanguageCode) {
+  if (!word || !sourceLanguageCode || !targetLanguageCode) {
+    console.error("Missing required parameters for translation");
+    return;
+  }
   const token = localStorage.getItem("token");
   const payload = {
     word,
@@ -261,6 +265,25 @@ async function postVoicePreference(voice, languageId) {
   }
 }
 
+async function postNativeVoicePreference(voice) {
+  const token = localStorage.getItem("token");
+  const payload = {
+    voice,
+  };
+
+  try {
+    await axios.post("https://localhost:3001/user-native-language-voice", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+
 
 export {
   postUser,
@@ -276,5 +299,6 @@ export {
   postWord,
   fetchVoices,
   getAudio,
-  postVoicePreference
+  postVoicePreference,
+  postNativeVoicePreference
 };

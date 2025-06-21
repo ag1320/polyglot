@@ -1,69 +1,67 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectMyLanguagesWithVoices } from "../utilities/helperFunctions.js";
-import {
-  Tabs,
-  Tab,
-  Box,
-  Typography,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Button,
-} from "@mui/material";
-import { translateWord } from "../utilities/serverCalls.js";
-import { sayWord } from "../utilities/helperFunctions.js";
+import { Tabs, Tab, Box, Typography } from "@mui/material";
 import { postVoicePreference } from "../utilities/serverCalls.js";
 import "../styling/ChooseVoices.css";
+import { translateWord } from "../utilities/serverCalls.js";
+import CustomButton from "./CustomButton.jsx";
+import VoiceSelect from "./VoiceSelect.jsx";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../state/userSlice.js";
 
 const ChooseVoices = () => {
   const myLanguagesWithVoices = useSelector(selectMyLanguagesWithVoices);
-  const nativeLanguage = useSelector((state) => state?.user?.user?.native_language);
+  const user = useSelector((state) => state.user?.user);
   const [currentTab, setCurrentTab] = useState(0);
-  const [selectedVoices, setSelectedVoices] = useState({});
+  const [selectedVoiceTitle, setSelectedVoiceTitle] = useState({});
+  const [translatedWord, setTranslatedWord] = useState("Hello");
+  const [currentLanguage, setCurrentLanguage] = useState({});
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const initialVoices = {};
-    myLanguagesWithVoices.forEach((lang) => {
-      const presetVoice = lang.voice;
-      if (presetVoice && lang.voices.some((v) => v.title === presetVoice)) {
-        initialVoices[lang.id] = presetVoice;
-      } else if (lang.voices.length > 0) {
-        initialVoices[lang.id] = lang.voices[0].title;
-      }
-    });
-    setSelectedVoices(initialVoices);
-  }, [myLanguagesWithVoices]);
+    setCurrentLanguage(myLanguagesWithVoices[currentTab]);
+
+    const fetchTranslation = async () => {
+      const translatedWord = await translateWord(
+        "hello",
+        user?.native_language?.code,
+        myLanguagesWithVoices[currentTab]?.code
+      );
+
+      setTranslatedWord(translatedWord || "hello");
+    };
+
+    fetchTranslation();
+    //eslint-disable-next-line
+  }, [currentTab, myLanguagesWithVoices]);
 
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
   };
 
-  const handleVoiceSelect = async (language, voice) => {
-    setSelectedVoices((prev) => ({
-      ...prev,
-      [language.id]: voice,
-    }));
-
-    const translatedWord = await translateWord(
-      "hello",
-      nativeLanguage.code,
-      language.code
-    );
-
-    sayWord(voice, translatedWord);
+  const handleSubmit = () => {
+    if (selectedVoiceTitle) {
+      postVoicePreference(selectedVoiceTitle, currentLanguage.id);
+    }
+    dispatch(updateUser());
   };
 
-  const handleSubmit = () => {
-    const currentLanguage = myLanguagesWithVoices[currentTab];
-    const selectedVoice = selectedVoices[currentLanguage.id];
-    if (selectedVoice) {
-      postVoicePreference(selectedVoice, currentLanguage.id);
-    }
+  const findPreselectedIndex = (languageId) => {
+    const currentLanguage = myLanguagesWithVoices.find(
+      (lang) => lang.id === languageId
+    );
+    const preselectedIndex = currentLanguage?.voices?.findIndex(
+      (voice) => voice.title === currentLanguage?.voice
+    );
+    return preselectedIndex !== -1 ? preselectedIndex : 0;
   };
 
   return (
     <>
+      <Typography variant="body1" color="#000" sx={{ mt: 2 }}>
+        My Languages Voice Preferences
+      </Typography>
       <Tabs
         value={currentTab}
         onChange={handleTabChange}
@@ -76,42 +74,30 @@ const ChooseVoices = () => {
         ))}
       </Tabs>
 
-      <Box className="choose-voice-container">
+      <>
         {myLanguagesWithVoices.map((lang, idx) => {
           if (idx !== currentTab) return null;
           return (
-            <Box key={lang.id}>
-              <Typography variant="h6" gutterBottom className="choose-voice-title">
-                Choose a Voice
-              </Typography>
-              <RadioGroup
-                value={selectedVoices[lang.id] || ""}
-                onChange={(e) => handleVoiceSelect(lang, e.target.value)}
-              >
-                {lang.voices.map((voice, index) => (
-                  <FormControlLabel
-                    key={voice.title}
-                    value={voice.title}
-                    control={<Radio />}
-                    label={`Voice ${index + 1}`}
-                    className="voice-radio-label"
-                  />
-                ))}
-              </RadioGroup>
-
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ mt: 2 }}
-                onClick={handleSubmit}
-                fullWidth
-              >
-                Submit Preference
-              </Button>
-            </Box>
+            <>
+              <Box key={lang.id}>
+                <VoiceSelect
+                  voices={lang.voices}
+                  setSelectedVoiceTitle={setSelectedVoiceTitle}
+                  wordToSpeak={translatedWord}
+                  preselectedIndex={() => findPreselectedIndex(lang.id)}
+                />
+              </Box>
+              <div className="choose-voice-button-container">
+                <CustomButton
+                  buttonText={"Submit"}
+                  buttonFunction={handleSubmit}
+                  className="choose-voice-button"
+                />
+              </div>
+            </>
           );
         })}
-      </Box>
+      </>
     </>
   );
 };

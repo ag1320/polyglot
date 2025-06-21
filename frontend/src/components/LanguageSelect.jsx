@@ -147,7 +147,7 @@ const LanguageSelect = ({
               return selectedLang ? (
                 <Box className="language-select-flag-container">
                   <img
-                    src={`https://flagcdn.com/${selectedLang.flga_code}.svg`}
+                    src={`https://flagcdn.com/${selectedLang.flag_code}.svg`}
                     alt={`${selectedLang.name} flag`}
                     className="flag-icon"
                   />

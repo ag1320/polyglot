@@ -155,6 +155,13 @@ async function postUserLanguageVoice(voice, language_id, user_id) {
   return;
 }
 
+async function postUserNativeLanguageVoice(voice, id) {
+  await knex("users")
+    .where({ id })
+    .update({ native_language_voice:voice });
+  return;
+}
+
 //WORDS
 async function postWord(sourceWord, translatedWord, sourceLangId, targetLangId, userId) {
   await knex("words").insert({
@@ -178,5 +185,6 @@ export {
   postUserLanguage,
   postUserLanguageDefault,
   postWord,
-  postUserLanguageVoice
+  postUserLanguageVoice,
+  postUserNativeLanguageVoice
 };

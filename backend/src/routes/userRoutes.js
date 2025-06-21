@@ -9,7 +9,8 @@ import {
   getUser,
   postUserLanguage,
   postUserLanguageDefault,
-  postUserLanguageVoice
+  postUserLanguageVoice,
+  postUserNativeLanguageVoice
 } from "../controllers/controllers.js";
 import {
   hashPassword,
@@ -145,6 +146,19 @@ router.post("/user-language-voice", authenticateToken, async (req, res) => {
   console.log("Received new voice:", { voice, languageId, userId });
   try {
     await postUserLanguageVoice(voice, languageId, userId);
+    res.status(201).json({ message: "Voice preference changed" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to change voice preference");
+  }
+});
+
+router.post("/user-native-language-voice", authenticateToken, async (req, res) => {
+  const { voice } = req.body;
+  const userId = req.user.id;
+  console.log("Received new native voice:", { voice, userId });
+  try {
+    await postUserNativeLanguageVoice(voice, userId);
     res.status(201).json({ message: "Voice preference changed" });
   } catch (err) {
     console.error(err);

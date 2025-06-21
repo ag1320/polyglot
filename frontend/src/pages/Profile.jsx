@@ -6,6 +6,7 @@ import ProfileDetails from "../components/ProfileDetails.jsx";
 import MyLevel from "../components/MyLevel.jsx";
 import { Card } from "@mui/material";
 import "../styling/Profile.css";
+import ChooseNativeLanguageVoice from "../components/ChooseNativeLanguageVoice.jsx";
 
 const Profile = () => {
   return (
@@ -30,6 +31,11 @@ const Profile = () => {
       <Grid size={4}>
         <Card className="profile-card">
           <DefaultLanguageSelector />
+        </Card>
+      </Grid>
+      <Grid size={4}>
+        <Card className="profile-card">
+          <ChooseNativeLanguageVoice />
         </Card>
       </Grid>
       <Grid size={4}>

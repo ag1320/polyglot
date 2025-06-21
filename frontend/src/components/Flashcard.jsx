@@ -8,22 +8,40 @@ import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 const Flashcard = ({ mode = "source", word, user }) => {
   const [flipped, setFlipped] = useState(false);
 
-  const isSourceFirst = mode === "source";
-  const frontText = isSourceFirst
-    ? word.word_in_source_language
-    : word.word_in_target_language;
-  const backText = isSourceFirst
-    ? word.word_in_target_language
-    : word.word_in_source_language;
+  if (!word) {
+    return (
+      <div className="flashcard-wrapper">
+        <Typography variant="h6" color="#000">
+          No word available
+        </Typography>
+      </div>
+    );
+  }
 
-  const executeAudioSequence = (word) => {
-    // const voice = user.my_languages.find(
-    //   (lang) => lang.id === word.language_target_id
-    // )?.voice;
-    //get voice
-    // if (voice) {
-    //   sayWord(voice, word);
-    // }
+  const isSourceFirst = mode === "source";
+  // Determine which language to show first based on the mode
+  let frontText = word.word_in_target_language;
+  let frontLanguage = word.language_target_id;
+  let backText = word.word_in_source_language;
+  let backLanguage = word.language_source_id;
+  if (isSourceFirst) {
+    frontText = word.word_in_source_language;
+    frontLanguage = word.language_source_id;
+    backText = word.word_in_target_language;
+    backLanguage = word.language_target_id;
+  }
+
+  const executeAudioSequence = (word, languageId) => {
+    let voice = user.my_languages.find((lang) => lang.id === languageId)?.voice;
+    if (!voice) {
+      voice =
+        user.native_language.id === languageId
+          ? user.native_language_voice
+          : "";
+    }
+    if (voice) {
+      sayWord(voice, word);
+    }
   };
 
   const handleVote = (correct) => {
@@ -36,11 +54,25 @@ const Flashcard = ({ mode = "source", word, user }) => {
     <div className="flashcard-wrapper">
       <div
         className={`flashcard ${flipped ? "flipped" : ""}`}
-        onClick={() => setFlipped((f) => !f)}
+        onClick={(e) => {
+          // Prevent flip if IconButton was clicked
+          if (
+            e.target.closest(".speaker-icon") ||
+            e.target.closest(".MuiIconButton-root")
+          ) {
+            return;
+          }
+          setFlipped((f) => !f);
+        }}
       >
         <div className="flashcard-face flashcard-front">
           <div className="flashcard-content">
-            <IconButton onClick={() => executeAudioSequence(frontText)}>
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                executeAudioSequence(frontText, frontLanguage);
+              }}
+            >
               <VolumeUpIcon className="speaker-icon" />
             </IconButton>
             <Typography variant="h3" className="flashcard-word">
@@ -51,7 +83,12 @@ const Flashcard = ({ mode = "source", word, user }) => {
 
         <div className="flashcard-face flashcard-back">
           <div className="flashcard-content">
-            <IconButton onClick={() => executeAudioSequence(backText)}>
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                executeAudioSequence(backText, backLanguage);
+              }}
+            >
               <VolumeUpIcon className="speaker-icon" />
             </IconButton>
             <Typography variant="h3" className="flashcard-word">
