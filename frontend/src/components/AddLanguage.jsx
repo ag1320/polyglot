@@ -1,4 +1,3 @@
-import { Card } from "@mui/material";
 import LanguageSelect from "./LanguageSelect.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
@@ -7,12 +6,14 @@ import { postNewUserLanguage } from "../utilities/serverCalls.js";
 import { updateUser } from "../state/userSlice.js";
 import { Typography } from "@mui/material";
 import "../styling/AddLanguage.css";
+import { filterVoicesByLanguage } from "../utilities/helperFunctions.js";
 
 const AddLanguage = () => {
   const [newLanguage, setNewLanguage] = useState({});
 
   const allLanguages = useSelector((state) => state.languages.allLanguages);
   const myLanguages = useSelector((state) => state.user.user?.my_languages);
+  const voices = useSelector((state) => state.audio.voices);
   const nativeLanguage = useSelector(
     (state) => state.user.user?.native_language
   );
@@ -27,7 +28,11 @@ const AddLanguage = () => {
 
   const handleSubmit = async () => {
     const isDefault = myLanguages.length === 0;
-    await postNewUserLanguage(newLanguage, isDefault);
+    const voice = filterVoicesByLanguage(
+      voices,
+      newLanguage.code
+    )[0]?.title;
+    await postNewUserLanguage(newLanguage, isDefault, voice);
     await dispatch(updateUser()).unwrap();
   };
 
@@ -36,6 +41,8 @@ const allLanguagesFiltered = allLanguages.filter(
     language.id !== nativeLanguage?.id &&
     !myLanguages?.some((myLang) => myLang.id === language.id)
 );
+
+console.log("voices", voices);
 
 
   return (

@@ -2,6 +2,9 @@ import { createSelector } from "@reduxjs/toolkit";
 import { getAudio } from "./serverCalls";
 
 const filterVoicesByLanguage = (voicesObj, langCode) => {
+  if (!voicesObj || !langCode) {
+    return [];
+  }
   return Object.entries(voicesObj)
     .filter(([_, voiceData]) => voiceData.language === langCode)
     .map(([key, value]) => ({
@@ -38,4 +41,4 @@ const sayWord = async (voice, word) => {
     }
 };
 
-export {selectMyLanguagesWithVoices, sayWord}
+export {filterVoicesByLanguage, selectMyLanguagesWithVoices, sayWord}

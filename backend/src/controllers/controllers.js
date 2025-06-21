@@ -1,11 +1,12 @@
 import knex from "./dbConnection.js";
 
-async function postUser(email, username, password, nativeLanguageId, name) {
+async function postUser(email, username, password, nativeLanguageId, nativeLanguageVoice, name) {
   const id = await knex("users").insert({
     email,
     username,
     password,
     native_language_id: nativeLanguageId,
+    native_language_voice: nativeLanguageVoice,
     first_name: name,
   }).returning("id");
   return id[0].id;
@@ -54,7 +55,6 @@ const getWordsForUser = async (userId, knex) => {
       "current_correct_streak",
       "current_incorrect_streak",
       "last_tested_at",
-      "exposure_count",
       "mastery_level",
       "recall_accuracy",
       "example_sentence",
@@ -77,6 +77,7 @@ async function getUser({ id, username }) {
       "users.username",
       "users.email",
       "users.first_name",
+      "users.native_language_voice",
       "languages.id as native_language_id",
       "languages.name as native_language_name",
       "languages.code as native_language_code",
@@ -103,6 +104,7 @@ async function getUser({ id, username }) {
     first_name: userData.first_name,
     email: userData.email,
     native_language,
+    native_language_voice: userData.native_language_voice,
     my_languages,
     words
   };
@@ -122,11 +124,12 @@ async function checkEmail(email) {
   return data[0];
 }
 
-async function postUserLanguage(newLanguageId, userId, isDefault) {
+async function postUserLanguage(newLanguageId, userId, isDefault, voice) {
   await knex("users_languages").insert({
     user_id: userId,
     language_id: newLanguageId,
-    is_default: isDefault
+    is_default: isDefault,
+    voice: voice || null
   });
   return;
 }

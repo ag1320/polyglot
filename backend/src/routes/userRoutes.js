@@ -21,10 +21,6 @@ dotenv.config();
 const router = Router();
 
 /****************************
-Helper functions
-****************************/
-
-/****************************
 Routes
 ****************************/
 router.post("/users", async (req, res) => {
@@ -33,7 +29,9 @@ router.post("/users", async (req, res) => {
     username,
     password,
     nativeLanguageId,
+    nativeLanguageVoice,
     learningLanguageId,
+    learningLanguageVoice,
     name,
   } = req.body;
   const hash = await hashPassword(password);
@@ -46,9 +44,9 @@ router.post("/users", async (req, res) => {
     }
 
     // Proceed with user creation if email is unique
-    const userId = await postUser(email, username, hash, nativeLanguageId, name);
+    const userId = await postUser(email, username, hash, nativeLanguageId, nativeLanguageVoice, name);
 
-    await postUserLanguage(learningLanguageId, userId, true);
+    await postUserLanguage(learningLanguageId, userId, true, learningLanguageVoice);
     res.status(201).json({ message: "User created successfully" });
   } catch (err) {
     console.error(err);
@@ -116,11 +114,11 @@ router.get("/verify-user", async (req, res) => {
 });
 
 router.post("/user-language", authenticateToken, async (req, res) => {
-  const { newLanguage, isDefault } = req.body;
+  const { newLanguage, isDefault, voice } = req.body;
   const userId = req.user.id;
   console.log("Received new language:", { newLanguage, userId });
   try {
-    await postUserLanguage(newLanguage.id, userId, isDefault);
+    await postUserLanguage(newLanguage.id, userId, isDefault, voice);
     res.status(201).json({ message: "Language added successfully" });
   } catch (err) {
     console.error(err);

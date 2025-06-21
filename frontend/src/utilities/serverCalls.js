@@ -6,7 +6,9 @@ async function postUser(
   username,
   password,
   nativeLanguageId,
+  nativeLanguageVoice,
   learningLanguageId,
+  learningLanguageVoice,
   name
 ) {
   try {
@@ -15,7 +17,9 @@ async function postUser(
       username,
       password,
       nativeLanguageId,
+      nativeLanguageVoice,
       learningLanguageId,
+      learningLanguageVoice,
       name,
     };
     await axios.post("https://localhost:3001/users", payload);
@@ -140,11 +144,12 @@ async function batchTranslateWords(
 }
 
 //add new language to user
-async function postNewUserLanguage(newLanguage, isDefault) {
+async function postNewUserLanguage(newLanguage, isDefault, voice) {
   const token = localStorage.getItem("token");
   const payload = {
     newLanguage,
     isDefault,
+    voice
   };
 
   try {

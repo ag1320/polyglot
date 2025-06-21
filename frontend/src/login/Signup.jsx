@@ -5,6 +5,7 @@ import { TextField, Typography, Snackbar, Alert } from "@mui/material";
 import CustomButton from "../components/CustomButton";
 import LanguageSelect from "../components/LanguageSelect";
 import { useSelector } from "react-redux";
+import { filterVoicesByLanguage } from "../utilities/helperFunctions";
 
 const Signup = () => {
   // user
@@ -23,22 +24,9 @@ const Signup = () => {
   const [success, setSuccess] = useState(false);
 
   const allLanguages = useSelector((state) => state.languages.allLanguages);
-  const [allLearningLanguages, setAllLearningLanguages] = useState(allLanguages);
-
-
-  // // fetch languages
-  // const fetchData = async () => {
-  //   try {
-  //     const languages = await fetchLanguages();
-  //     setAllLanguages(languages);
-  //   } catch (err) {
-  //     console.error("Error fetching data:", err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+  const voices = useSelector((state) => state.audio.voices);
+  const [allLearningLanguages, setAllLearningLanguages] =
+    useState(allLanguages);
 
   const addUser = async () => {
     if (usernameError) {
@@ -61,8 +49,26 @@ const Signup = () => {
       return;
     }
 
+    const nativeLanguageVoice = filterVoicesByLanguage(
+      voices,
+      nativeLanguage.code
+    )[0]?.title;
+    const learningLanguageVoice = filterVoicesByLanguage(
+      voices,
+      learningLanguage.code
+    )[0]?.title;
+
     try {
-      await postUser(email, username, password, nativeLanguage.id, learningLanguage.id, name);
+      await postUser(
+        email,
+        username,
+        password,
+        nativeLanguage.id,
+        nativeLanguageVoice,
+        learningLanguage.id,
+        learningLanguageVoice,
+        name
+      );
       setEmail("");
       setUsername("");
       setPassword("");
@@ -76,21 +82,20 @@ const Signup = () => {
     }
   };
 
-const handleNativeLanguageChange = (e) => {
-  const selectedLang = allLanguages.find(
-    (language) => language.id === e.target.value
-  );
-  setNativeLanguage(selectedLang);
+  const handleNativeLanguageChange = (e) => {
+    const selectedLang = allLanguages.find(
+      (language) => language.id === e.target.value
+    );
+    setNativeLanguage(selectedLang);
 
-  const filtered = allLanguages.filter((lang) => lang.id !== selectedLang.id);
-  setAllLearningLanguages(filtered);
+    const filtered = allLanguages.filter((lang) => lang.id !== selectedLang.id);
+    setAllLearningLanguages(filtered);
 
-  // Reset learning language if it matches the new native language
-  if (learningLanguage?.id === selectedLang.id) {
-    setLearningLanguage({});
-  }
-};
-
+    // Reset learning language if it matches the new native language
+    if (learningLanguage?.id === selectedLang.id) {
+      setLearningLanguage({});
+    }
+  };
 
   const handleLearningLanguageChange = (e) => {
     const selectedLang = allLearningLanguages.find(

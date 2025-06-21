@@ -1,9 +1,12 @@
+import Flashcard from "../components/Flashcard.jsx";
+import { useSelector } from "react-redux";
+
 const Flashcards = () => {
-  return (
-    <div>
-      {/* Your component content here */}
-    </div>
-  );
-}
+
+  const user = useSelector((state) => state.user.user);
+  const words = user?.words || [];
+
+  return <Flashcard />;
+};
 
 export default Flashcards;

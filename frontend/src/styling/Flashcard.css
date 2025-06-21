@@ -1,0 +1,95 @@
+.flashcard-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.flashcard {
+  width: 60%;
+  max-width: 500px;
+  aspect-ratio: 3/2;
+  perspective: 1000px;
+  cursor: pointer;
+  position: relative;
+}
+
+.flashcard-face {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: absolute;
+  backface-visibility: hidden;
+  transition: transform 0.6s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flashcard-front {
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+  z-index: 1;
+}
+
+.flashcard.flipped .flashcard-front {
+  transform: rotateY(-180deg);
+}
+
+.flashcard.flipped .flashcard-back {
+  transform: rotateY(0deg);
+}
+
+.flashcard-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.flashcard-word {
+  color: black;
+  margin-bottom: 20px;
+}
+
+.speaker-icon {
+  font-size: 2rem;
+  color: #1976d2;
+}
+
+.flip-icon {
+  font-size: 2.2rem;
+  margin-top: 15px;
+  color: #aaa;
+}
+
+.vote-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.vote-button {
+  transition: transform 0.2s ease;
+}
+
+.vote-button:hover {
+  transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

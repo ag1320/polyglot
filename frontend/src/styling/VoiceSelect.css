@@ -1,0 +1,29 @@
+
+.voice-dropdown-container {
+  width: 300px;
+  margin-top: 1rem;
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.voice-dropdown-list {
+  padding: 0;
+  max-height: 125px;
+  overflow-y: auto;
+}
+
+.voice-item {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+}
+
+.voice-item.selected,
+.voice-item:focus {
+  background-color: #e3f2fd;
+  outline: none;
+}
+
+.voice-item-text .MuiTypography-root {
+  color: black;
+}

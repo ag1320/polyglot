@@ -9,6 +9,7 @@ export async function up(knex) {
 
     // Foreign key to languages table
     table.integer('native_language_id').unsigned().references('id').inTable('languages').onDelete('SET NULL');
+    table.string("native_language_voice").defaultTo(null);
 
     // Timestamps
     table.timestamp('created_at').defaultTo(knex.fn.now());

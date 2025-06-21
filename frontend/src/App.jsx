@@ -20,6 +20,8 @@
 //do not allow user to submit duplicate word combos
 //signout tooltip above the icon
 //filter words by language
+//fix tab bar overflow on profile voice preferences card
+//make voice seletion radio buttons a dropdown instead
 
 // App.jsx
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
