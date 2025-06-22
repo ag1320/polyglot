@@ -11,6 +11,9 @@ export async function up(knex) {
     table.integer('native_language_id').unsigned().references('id').inTable('languages').onDelete('SET NULL');
     table.string("native_language_voice").defaultTo(null);
 
+    //level points
+    table.integer('total_points').unsigned().defaultTo(0);
+
     // Timestamps
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());

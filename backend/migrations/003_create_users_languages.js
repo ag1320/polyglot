@@ -2,12 +2,10 @@ export async function up(knex) {
   await knex.schema.createTable('users_languages', (table) => {
     table.increments('id').primary();
 
-    // Foreign key to users
     table.integer('user_id').unsigned().notNullable()
       .references('id').inTable('users')
       .onDelete('CASCADE');
 
-    // Foreign key to languages
     table.integer('language_id').unsigned().notNullable()
       .references('id').inTable('languages')
       .onDelete('CASCADE');
@@ -15,7 +13,8 @@ export async function up(knex) {
     table.boolean('is_default').defaultTo(false);
     table.string("voice").defaultTo(null);
 
-    // Ensure uniqueness (a user can't learn the same language twice)
+    table.integer('language_points').unsigned().defaultTo(0);
+
     table.unique(['user_id', 'language_id']);
   });
 }

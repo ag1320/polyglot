@@ -14,6 +14,7 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { Link } from "react-router-dom";
 import LanguageSelect from "./LanguageSelect";
 import { setSelectedLanguage } from "../state/userSlice";
+import HomeIcon from "@mui/icons-material/Home";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -33,7 +34,6 @@ const Sidebar = () => {
     );
     dispatch(setSelectedLanguage(selectedLang));
   };
-
 
   return (
     <aside className="sidebar">
@@ -65,6 +65,13 @@ const Sidebar = () => {
               mode="mini"
             />
           </div>
+        </Tooltip>
+        <Tooltip title="Home" arrow placement="top">
+          <Link to="/dashboard" className="sidebard-link">
+            <IconButton className="sidebar-icon-button">
+              <HomeIcon className="sidebar-icon" fontSize="large" />
+            </IconButton>
+          </Link>
         </Tooltip>
         <Tooltip title="Profile" arrow placement="top">
           <Link to="/profile" className="sidebard-link">

@@ -96,17 +96,18 @@ router.get("/verify-user", async (req, res) => {
   try {
     const hash = await getHashByUsername(username);
     const isVerified = await verifyPassword(hash, password);
-
+    console.log("111111111111111111111111111")
     if (!isVerified) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
-
+    console.log("222222222222222222222222222222222")
     const user = await getUser({ username });
+    console.log("33333333333333333333333333333333333")
     const payload = { id: user.id, username: user.username };
+    console.log("44444444444444444444444444444444444")
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRY || "1h",
     });
-
     res.status(200).json({ token, user });
   } catch (err) {
     console.error(err);

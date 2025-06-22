@@ -3,11 +3,11 @@ import { useSelector } from "react-redux";
 import "../styling/MyLanguagesCard.css";
 import { BigErrorIcon } from "../styling/MyLanguagesCard.js";
 
-const MyLanguagesCard = () => {
+const MyLanguages = () => {
   const myLanguages = useSelector((state) => state.user.user?.my_languages);
 
   return (
-    <Card className="my-languages-card">
+    <>
       {myLanguages?.length > 0 ? (
         <>
           <Typography variant="h5" color="black" className="my-languages-text">
@@ -38,8 +38,8 @@ const MyLanguagesCard = () => {
           </Typography>
         </>
       )}
-    </Card>
+    </>
   );
 };
 
-export default MyLanguagesCard;
+export default MyLanguages;

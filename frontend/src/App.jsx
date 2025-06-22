@@ -22,6 +22,9 @@
 //filter words by language
 //fix tab bar overflow on profile voice preferences card
 //make voice seletion radio buttons a dropdown instead
+//Update logic: whenever a user deletes a language, you need to subtract that many points from total_points in users table. 
+//    The trigger was too complicated
+// fix bug where initial signup does not assign a voice in the db to users_languages
 
 // App.jsx
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
