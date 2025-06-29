@@ -284,6 +284,27 @@ async function postNativeVoicePreference(voice) {
   }
 }
 
+async function postFlashcardAttempt(wordId, languageId, isCorrect) {
+  const token = localStorage.getItem("token");
+  const payload = {
+    wordId,
+    languageId,
+    isCorrect
+  };
+
+  try {
+    await axios.post("https://localhost:3001/flashcard-attempt", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+
 
 export {
   postUser,
@@ -300,5 +321,6 @@ export {
   fetchVoices,
   getAudio,
   postVoicePreference,
-  postNativeVoicePreference
+  postNativeVoicePreference,
+  postFlashcardAttempt
 };

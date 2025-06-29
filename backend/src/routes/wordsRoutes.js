@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { 
+  postFlashcardAttempt,
   postWord
 } from "../controllers/controllers.js";
 import {
@@ -24,5 +25,22 @@ router.post("/words", authenticateToken, async (req, res) => {
     res.status(500).json({ error: "Word post failed" });
   }
 });
+
+router.post("/flashcard-attempt", authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const { wordId, languageId, isCorrect } = req.body;
+    await postFlashcardAttempt(wordId, userId, languageId, isCorrect);
+    res.status(200).json({ message: "success" });
+
+  } catch (err) {
+    console.error("Flashcard attempt error:", err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "error posting flashcard attempt" });
+    }
+  }
+});
+
 
 export default router;

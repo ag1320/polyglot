@@ -36,7 +36,7 @@ const AddLanguage = () => {
     await dispatch(updateUser()).unwrap();
   };
 
-const allLanguagesFiltered = allLanguages.filter(
+const allLanguagesFiltered = allLanguages?.filter(
   (language) =>
     language.id !== nativeLanguage?.id &&
     !myLanguages?.some((myLang) => myLang.id === language.id)

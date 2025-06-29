@@ -4,9 +4,15 @@ import { sayWord } from "../utilities/helperFunctions.js";
 
 import { IconButton, Button, Typography } from "@mui/material";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import { postFlashcardAttempt } from "../utilities/serverCalls.js";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../state/userSlice.js";
 
-const Flashcard = ({ mode = "source", word, user }) => {
+const Flashcard = ({ mode = "source", word, user, setNextWord }) => {
   const [flipped, setFlipped] = useState(false);
+  const [animationClass, setAnimationClass] = useState("");
+
+  const dispatch = useDispatch();
 
   if (!word) {
     return (
@@ -19,11 +25,12 @@ const Flashcard = ({ mode = "source", word, user }) => {
   }
 
   const isSourceFirst = mode === "source";
-  // Determine which language to show first based on the mode
+
   let frontText = word.word_in_target_language;
   let frontLanguage = word.language_target_id;
   let backText = word.word_in_source_language;
   let backLanguage = word.language_source_id;
+
   if (isSourceFirst) {
     frontText = word.word_in_source_language;
     frontLanguage = word.language_source_id;
@@ -34,28 +41,37 @@ const Flashcard = ({ mode = "source", word, user }) => {
   const executeAudioSequence = (word, languageId) => {
     let voice = user.my_languages.find((lang) => lang.id === languageId)?.voice;
     if (!voice) {
-      voice =
-        user.native_language.id === languageId
-          ? user.native_language_voice
-          : "";
+      voice = user.native_language.id === languageId
+        ? user.native_language_voice
+        : "";
     }
     if (voice) {
       sayWord(voice, word);
     }
   };
 
-  const handleVote = (correct) => {
-    // You can dispatch actions here or call APIs later
-    console.log(`User voted: ${correct ? "Correct" : "Incorrect"}`);
-    setFlipped(false);
+  const handleVote = async (correct) => {
+    if (correct) {
+      setAnimationClass("flashcard-correct");
+    } else {
+      setAnimationClass("flashcard-incorrect");
+    }
+
+    setTimeout(() => {
+      setFlipped(false);
+      setAnimationClass("");
+    }, 800); // Adjust duration to match animation
+
+    await postFlashcardAttempt(word.id, word.language_target_id, correct)
+    await dispatch(updateUser()).unwrap();
+    setNextWord();
   };
 
   return (
     <div className="flashcard-wrapper">
       <div
-        className={`flashcard ${flipped ? "flipped" : ""}`}
+        className={`flashcard ${flipped ? "flipped" : ""} ${animationClass}`}
         onClick={(e) => {
-          // Prevent flip if IconButton was clicked
           if (
             e.target.closest(".speaker-icon") ||
             e.target.closest(".MuiIconButton-root")

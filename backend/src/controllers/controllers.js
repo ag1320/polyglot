@@ -176,6 +176,61 @@ async function postWord(sourceWord, translatedWord, sourceLangId, targetLangId, 
   return;
 }
 
+async function postFlashcardAttempt(wordId, userId, languageId, isCorrect) {
+  await knex.transaction(async (trx) => {
+    // Step 1: Fetch current word data
+    const word = await trx("words").where({ id: wordId }).first();
+
+    if (!word) {
+      throw new Error("Word not found");
+    }
+
+    // Shared updates
+    const newTotalAttempts = word.total_attempts + 1;
+    const updated_at = trx.fn.now();
+    const last_tested_at = updated_at;
+
+    let updateFields = {
+      total_attempts: newTotalAttempts,
+      last_tested_at,
+      updated_at,
+    };
+
+    if (isCorrect) {
+      const newCorrectAttempts = word.correct_attempts + 1;
+      const newCorrectStreak = word.current_correct_streak + 1;
+      const newRecallAccuracy = (newCorrectAttempts / newTotalAttempts) * 100;
+
+      updateFields = {
+        ...updateFields,
+        correct_attempts: newCorrectAttempts,
+        current_correct_streak: newCorrectStreak,
+        current_incorrect_streak: 0,
+        recall_accuracy: newRecallAccuracy.toFixed(2),
+        score: word.score + 10,
+      };
+
+      // Add points to user-language connection
+      await trx("users_languages")
+        .where({ user_id: userId, language_id: languageId })
+        .increment("language_points", 10);
+    } else {
+      const newIncorrectStreak = word.current_incorrect_streak + 1;
+      const newRecallAccuracy = (word.correct_attempts / newTotalAttempts) * 100;
+
+      updateFields = {
+        ...updateFields,
+        current_correct_streak: 0,
+        current_incorrect_streak: newIncorrectStreak,
+        recall_accuracy: newRecallAccuracy.toFixed(2),
+        // Note: score remains the same
+      };
+    }
+
+    await trx("words").where({ id: wordId }).update(updateFields);
+  });
+}
+
 
 export {
   postUser,
@@ -188,5 +243,6 @@ export {
   postUserLanguageDefault,
   postWord,
   postUserLanguageVoice,
-  postUserNativeLanguageVoice
+  postUserNativeLanguageVoice,
+  postFlashcardAttempt
 };
