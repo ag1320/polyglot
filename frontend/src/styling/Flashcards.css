@@ -1,0 +1,28 @@
+.flashcard-toggle-button {
+  /* Default (unselected) state */
+  color: #fff; /* text color */
+  background-color: #474973;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover state */
+.flashcard-toggle-button:hover {
+  border-color: #666;
+  background-color: #e0e0e0;
+  color: #000;
+}
+
+/* Selected state */
+.flashcard-toggle-button.Mui-selected {
+  background-color: #A69CAC;
+  color: #000;
+  border-color: #000;
+}
+
+/* Selected + hover */
+.flashcard-toggle-button.Mui-selected:hover {
+  background-color: #1565c0;
+  border-color: #0d47a1;
+  color: #fff;
+}

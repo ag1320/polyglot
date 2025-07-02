@@ -8,7 +8,7 @@ import { postFlashcardAttempt } from "../utilities/serverCalls.js";
 import { useDispatch } from "react-redux";
 import { updateUser } from "../state/userSlice.js";
 
-const Flashcard = ({ mode = "source", word, user, setNextWord }) => {
+const Flashcard = ({ mode = "source", word, user }) => {
   const [flipped, setFlipped] = useState(false);
   const [animationClass, setAnimationClass] = useState("");
 
@@ -41,9 +41,10 @@ const Flashcard = ({ mode = "source", word, user, setNextWord }) => {
   const executeAudioSequence = (word, languageId) => {
     let voice = user.my_languages.find((lang) => lang.id === languageId)?.voice;
     if (!voice) {
-      voice = user.native_language.id === languageId
-        ? user.native_language_voice
-        : "";
+      voice =
+        user.native_language.id === languageId
+          ? user.native_language_voice
+          : "";
     }
     if (voice) {
       sayWord(voice, word);
@@ -57,14 +58,15 @@ const Flashcard = ({ mode = "source", word, user, setNextWord }) => {
       setAnimationClass("flashcard-incorrect");
     }
 
-    setTimeout(() => {
+    setTimeout(async () => {
       setFlipped(false);
       setAnimationClass("");
     }, 800); // Adjust duration to match animation
 
-    await postFlashcardAttempt(word.id, word.language_target_id, correct)
-    await dispatch(updateUser()).unwrap();
-    setNextWord();
+    setTimeout(async () => {
+      await postFlashcardAttempt(word.id, word.language_target_id, correct);
+      await dispatch(updateUser()).unwrap();
+    }, 900); // delayed slightly so that the next answer doesn't appear before the animation ends
   };
 
   return (

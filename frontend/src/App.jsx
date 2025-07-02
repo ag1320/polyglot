@@ -26,8 +26,6 @@
 //    The trigger was too complicated
 // fix bug where initial signup does not assign a voice in the db to users_languages
 // fix login bug
-//prevent the same word from appearing twice in flashcards
-//fix the bug where the flashcard shows the next word before flipping back to the front
 
 // App.jsx
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
