@@ -1,0 +1,61 @@
+.manual-add-word-modal-box{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: white;
+  border: 2px solid #000;
+  box-shadow: 24;
+  padding: 16px;
+}
+
+.add-word-modal-button-container {
+  margin: 20px;
+}
+
+.manual-add-word-title {
+  color: #5e3960;
+}
+
+/* Input field root */
+.manual-add-word-textbox .MuiOutlinedInput-root {
+  border-radius: 6px;
+  width: 100%;
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+
+/* Default border */
+.manual-add-word-textbox .MuiOutlinedInput-notchedOutline {
+  border-color: #5e3960;
+}
+
+/* Border on hover */
+.manual-add-word-textbox:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #161B33;
+}
+
+/* Border and glow on focus */
+.manual-add-word-textbox .Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #161B33;
+}
+
+/* default label color */
+.manual-add-word-textbox .MuiInputLabel-root {
+  color: #5e3960;
+}
+
+/* Focused label color */
+.manual-add-word-textbox .MuiInputLabel-root.Mui-focused {
+  color: #161B33;
+}
+/* Text color in input focused */
+.manual-add-word-textbox .MuiOutlinedInput-input {
+  color: #161B33;
+}
+
+/* Text color in input not focused */
+.manual-add-word-textbox .MuiOutlinedInput-root:not(.Mui-focused) .MuiOutlinedInput-input {
+  color: #5e3960;
+}

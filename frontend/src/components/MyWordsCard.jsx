@@ -9,18 +9,24 @@ import {
   Collapse,
   Divider,
   Pagination,
+  Tooltip,
 } from "@mui/material";
 import "../styling/MyWordsCard.css";
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import { sayWord } from "../utilities/helperFunctions.js";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../state/userSlice.js";
+import { deleteWord } from "../utilities/serverCalls.js";
 
 const MyWordsCard = () => {
   const words = useSelector((state) => state.user.user?.words || []);
   const user = useSelector((state) => state.user?.user || {});
   const [expandedIndex, setExpandedIndex] = useState(null);
+  const dispatch = useDispatch();
 
   // Pagination setup
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
   const [page, setPage] = useState(1);
   const pageCount = Math.ceil(words.length / itemsPerPage);
   const paginatedWords = words.slice(
@@ -39,16 +45,30 @@ const MyWordsCard = () => {
 
   const executeAudioSequence = (e, word) => {
     e.stopPropagation(); // Prevent the click from toggling the collapse
-    const voice = user.my_languages.find((lang) => lang.id === word.language_target_id)?.voice;
+    const voice = user.my_languages.find(
+      (lang) => lang.id === word.language_target_id
+    )?.voice;
     sayWord(voice, word.word_in_target_language);
-  }
+  };
+
+  const handleDeleteWord = (e, word) => {
+    e.stopPropagation();
+    if (
+      window.confirm(
+        `Are you sure you want to delete the word "${word.word_in_source_language} - ${word.word_in_target_language}"?`
+      )
+    ) {
+      deleteWord(word.id);
+      dispatch(updateUser()).unwrap();
+    }
+  };
 
   return (
     <Box className="my-words-card-container">
       <Card className="my-words-card">
         <CardContent sx={{ flexGrow: 1, overflow: "auto", paddingBottom: 0 }}>
           <Typography variant="h6" gutterBottom textAlign="center">
-            My Words
+            {`My Words (${words.length})`}
           </Typography>
 
           {paginatedWords.map((word, index) => {
@@ -64,11 +84,16 @@ const MyWordsCard = () => {
                       {`${word.word_in_source_language} - ${word.word_in_target_language}`}
                     </Typography>
                   </Box>
-                  <IconButton
-                    onClick = {(e) => executeAudioSequence(e, word)}
-                  >
-                    <VolumeUpIcon className="speaker-icon"/>
-                  </IconButton>
+                  <Box classname="word-icon-container">
+                    <IconButton onClick={(e) => executeAudioSequence(e, word)}>
+                      <VolumeUpIcon className="speaker-icon" />
+                    </IconButton>
+                    <Tooltip title="Delete" arrow>
+                      <IconButton onClick={(e) => handleDeleteWord(e, word)}>
+                        <DeleteIcon className="delete-icon" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </Box>
                 <Collapse
                   in={expandedIndex === globalIndex}

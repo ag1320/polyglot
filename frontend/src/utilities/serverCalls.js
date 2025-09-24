@@ -214,6 +214,23 @@ async function postWord(sourceWord, translatedWord, sourceLangId, targetLangId) 
   }
 }
 
+async function deleteWord(wordId) {
+  const token = localStorage.getItem("token");
+
+  try {
+    await axios.delete("https://localhost:3001/words", {
+      data: { wordId },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+
 async function fetchVoices() {
   const token = localStorage.getItem("token");
 
@@ -318,6 +335,7 @@ export {
   postNewDefaultLanguage,
   batchTranslateWords,
   postWord,
+  deleteWord,
   fetchVoices,
   getAudio,
   postVoicePreference,

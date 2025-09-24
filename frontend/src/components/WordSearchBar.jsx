@@ -4,8 +4,7 @@ import debounce from "lodash.debounce";
 import useWordList from "../data-fetch/useWordList";
 import "../styling/WordSearchBar.css";
 import { batchTranslateWords, postWord } from "../utilities/serverCalls.js";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { updateUser } from "../state/userSlice.js";
 
 import {
@@ -18,12 +17,11 @@ import {
   Typography
 } from "@mui/material";
 
-export default function WordSearchBar() {
+export default function WordSearchBar({ openManualAddModal, input, setInput }) {
   const wordList = useWordList();
   const fuseRef = useRef(null);
   const dispatch = useDispatch();
 
-  // Get full language objects
   const sourceLanguage = useSelector(
     (state) => state?.user?.user?.native_language
   );
@@ -39,7 +37,7 @@ export default function WordSearchBar() {
     await dispatch(updateUser()).unwrap();
   };
 
-  const [input, setInput] = useState("");
+  
   const [sourceWords, setSourceWords] = useState([]);
   const [translatedWords, setTranslatedWords] = useState([]);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -58,7 +56,7 @@ export default function WordSearchBar() {
 
   useEffect(() => {
     debouncedSearch.current = debounce((value) => {
-      if (!fuseRef.current || value.length < 2) {
+      if (!fuseRef.current || value.trim().length < 2) {
         setSourceWords([]);
         setTranslatedWords([]);
         setDropdownVisible(false);
@@ -68,6 +66,7 @@ export default function WordSearchBar() {
       const matches = fuseRef.current.search(value).slice(0, 5);
       const words = matches?.map((m) => m.item);
       setSourceWords(words);
+      setDropdownVisible(true);
     }, 300);
   }, []);
 
@@ -78,13 +77,22 @@ export default function WordSearchBar() {
   }, [input]);
 
   useEffect(() => {
-    if (
-      sourceWords.length === 0 ||
-      !sourceLanguage?.code ||
-      !targetLanguage?.code
-    ) {
+    if (!sourceLanguage?.code || !targetLanguage?.code) {
       setTranslatedWords([]);
       setDropdownVisible(false);
+      return;
+    }
+
+    if (input.trim().length < 2) {
+      setTranslatedWords([]);
+      setDropdownVisible(false);
+      return;
+    }
+
+    if (sourceWords.length === 0) {
+      setTranslatedWords([]);
+      setDropdownVisible(true);
+      setHighlightedIndex(-1);
       return;
     }
 
@@ -97,9 +105,9 @@ export default function WordSearchBar() {
       .catch((err) => {
         console.error("Batch translation failed:", err);
         setTranslatedWords([]);
-        setDropdownVisible(false);
+        setDropdownVisible(true);
       });
-  }, [sourceWords, sourceLanguage?.code, targetLanguage?.code]);
+  }, [sourceWords, sourceLanguage?.code, targetLanguage?.code, input]);
 
   const suggestions = sourceWords?.map((source, i) => ({
     source,
@@ -136,11 +144,23 @@ export default function WordSearchBar() {
         handleSelect(suggestions[highlightedIndex]);
       } else if (suggestions.length > 0) {
         handleSelect(suggestions[0]);
+      } else if (input.trim()) {
+        // No results, but user typed something -> open manual modal
+        openManualAddModal(input.trim());
+        setDropdownVisible(false);
+        setHighlightedIndex(-1);
       }
     } else if (e.key === "Escape") {
       setDropdownVisible(false);
       setHighlightedIndex(-1);
     }
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      setDropdownVisible(false);
+      setHighlightedIndex(-1);
+    }, 150);
   };
 
   return (
@@ -152,7 +172,8 @@ export default function WordSearchBar() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          label="Type to add a word"
+          onBlur={handleBlur}
+          label="Type to quick add a word"
           variant="outlined"
           className="wordsearch-textbox"
           slotProps={{
@@ -175,7 +196,7 @@ export default function WordSearchBar() {
           }}
         />
 
-        {isDropdownVisible && suggestions.length > 0 && (
+        {isDropdownVisible && input.trim().length >= 2 && (
           <Paper
             elevation={3}
             className="wordsearch-dropdown"
@@ -190,32 +211,45 @@ export default function WordSearchBar() {
             }}
           >
             <List className="wordsearch-list">
-              {suggestions?.map((item, idx) => (
-                <ListItem
-                  key={idx}
-                  button
-                  onClick={() => handleSelect(item)}
-                  selected={idx === highlightedIndex}
-                  sx={{
-                    backgroundColor:
-                      idx === highlightedIndex ? "#A69CAC" : "inherit",
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor:
-                        idx === highlightedIndex ? "#A69CAC" : "#D3D0D8",
-                    },
-                  }}
-                >
+              {suggestions.length === 0 ? (
+                <ListItem>
                   <ListItemText
                     disableTypography
                     primary={
-                      <Typography variant="h6" sx={{ color: "#000" }} align={"center"}>
-                        {`${item.source} – ${item.translated}`}
+                      <Typography variant="h6" sx={{ color: "#888" }} align="center">
+                        No Results - Press Enter to manually add "{input}"
                       </Typography>
                     }
                   />
                 </ListItem>
-              ))}
+              ) : (
+                suggestions?.map((item, idx) => (
+                  <ListItem
+                    key={idx}
+                    button
+                    onClick={() => handleSelect(item)}
+                    selected={idx === highlightedIndex}
+                    sx={{
+                      backgroundColor:
+                        idx === highlightedIndex ? "#A69CAC" : "inherit",
+                      cursor: "pointer",
+                      "&:hover": {
+                        backgroundColor:
+                          idx === highlightedIndex ? "#A69CAC" : "#D3D0D8",
+                      },
+                    }}
+                  >
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="h6" sx={{ color: "#000" }} align={"center"}>
+                          {`${item.source} – ${item.translated}`}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                ))
+              )}
             </List>
           </Paper>
         )}

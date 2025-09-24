@@ -28,6 +28,16 @@
   background-color: #161B33;
 }
 
-.speaker-icon{
-  color: #fff;
+.word-icon-container{
+  display: flex;
+  margin: auto;
+  justify-content: end;
 }
+
+.speaker-icon{
+  color: #fff!important;
+}
+
+.delete-icon{
+  color: #fff;
+} 

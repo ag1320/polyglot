@@ -150,6 +150,13 @@ async function postUserLanguageDefault(language_id, user_id) {
   return;
 }
 
+async function deleteWord(wordId, userId) {
+  await knex("words")
+    .where({ id: wordId, user_id: userId })
+    .del();
+  return;
+}
+
 async function postUserLanguageVoice(voice, language_id, user_id) {
   await knex("users_languages")
     .where({ user_id, language_id })
@@ -242,6 +249,7 @@ export {
   postUserLanguage,
   postUserLanguageDefault,
   postWord,
+  deleteWord,
   postUserLanguageVoice,
   postUserNativeLanguageVoice,
   postFlashcardAttempt
